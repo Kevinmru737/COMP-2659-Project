@@ -1,5 +1,10 @@
-tst_rast: tst_rast.o raster.o rast_asm.o
-	cc68x -g tst_rast.o raster.o rast_asm.o -o tst_rast
+
+tst_rast: maps_tst.o tst_rast.o raster.o rast_asm.o
+	cc68x -g maps_tst.o tst_rast.o raster.o rast_asm.o -o tst_rast
+
+
+maps_tst.o: maps_tst.c bitmaps.h
+	cc68x -g -c maps_tst.c
 
 tst_rast.o: tst_rast.c raster.h
 	cc68x -g -c tst_rast.c
@@ -9,3 +14,4 @@ raster.o: raster.c raster.h
 
 rast_asm.o: rast_asm.s
 	gen -D -L2 rast_asm.s
+
