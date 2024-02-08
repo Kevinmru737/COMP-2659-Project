@@ -1,30 +1,39 @@
 #include <osbind.h>
 #include "raster.h"
+#include "rast_asm.h"
 
 int main() 
 {
+    
+  int x1 = 0;
+  int x2 = 15;
+
     UINT16* base = Physbase();
-    UINT8* base2 = Physbase();
-    UINT8 sprite[8] =
-        {
-            0x3c, 0x42, 0x81, 0x81, 0x81, 0x81, 0x42, 0x3c
-        };
-    /*
-    draw_horizontal_line(base, 25, 256, 100, 1);
-    draw_horizontal_line(base, 25, 263, 105, 8);
+    char*   base2 = Physbase();
+    UINT32* base3 = Physbase();
 
-    draw_horizontal_line(base, 16, 263, 95, 1);
+ 
+while(!Cconis()) {
 
-    draw_horizontal_line(base, 25, 267, 90, 3);
+    draw_horizontal_line(base, x1, x2, 144, 1);    
+    
+    Vsync();
+    
+    clear_screen(base3);
+   /* draw_horizontal_line(base, x1, x2, 144, 1); */
+    
+    x1 +=1;
+    x2 += 1;
+	
+    if(x2 > 639) {
+   	    x1 = 0;
+        x2 = 15;
+    }
 
-    draw_horizontal_line(base, 25, 31, 80, 3);
-    draw_horizontal_line(base, 32, 47, 83, 3);
 
-    draw_vertical_line(base, 250, 100, 300);
-    draw_vertical_line(base, 460, 256, 300);
 
-*/
-    draw_multi_of_8_bitmap(base2, 400, 300, 8, 8, sprite);
+}
+   
 
 
     return 0;

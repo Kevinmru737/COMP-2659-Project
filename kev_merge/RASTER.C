@@ -43,11 +43,11 @@
 void draw_horizontal_line (UINT16 *base, int x1, int x2, int y, int thickness) {
 
 	int curr_thick = 0;
+	base += (x1 / 16) + (y * 40);
 	if ((x1 % 16 != 0) || (x2 % 16 != 0)) {
 		int x1_draw = x1 % 16; /* for drawing the first partial byte*/
 		int x2_draw = x2 % 16; /* for drawing the second partial byte*/
 		int x_next_draw = (x2 / 16) - (x1 / 16); /* to find next drawing location*/
-		base += (x1 / 16) + (y * 40);
 		/* repeatedly drawing lines underneath the first for thickness */
 		while (curr_thick < thickness) {
 			int dif_unaligned = (x_next_draw - 1);
@@ -61,7 +61,7 @@ void draw_horizontal_line (UINT16 *base, int x1, int x2, int y, int thickness) {
 			}
 			/* incase the user tries to draw within a single byte*/
 			if (x_next_draw != 0) {
-				*base = x2_draw == 0 ? 0 : (0xFFFF) << (16 - x2_draw);
+				*base = /*x2_draw == 0 ? 0 : */(0xFFFF) << (16 - x2_draw);
 				base += (40 - (x_next_draw));
 			}
 			else {
@@ -71,11 +71,10 @@ void draw_horizontal_line (UINT16 *base, int x1, int x2, int y, int thickness) {
 		}
 	}
 	else {
-		base += (x1 / 16) + (y * 40);
 		while (curr_thick < thickness) {
 			int dif = (x2 - x1) / 16;  
 			while (dif > 0) {
-				*base = 0xFFFF;
+				*base = 0xFF00;
 				base++;
 				dif--;
 			}
@@ -85,8 +84,10 @@ void draw_horizontal_line (UINT16 *base, int x1, int x2, int y, int thickness) {
 	}
 }
 /*
- * Reference: Paul Pospisil
+ * Reference: Paul Pospisil (January 2023)
  * 
+ * Author: Kevin Oh 
+ *
  * Purpose: Draws a single pixel to the screen
  *
  * Parameters:
@@ -174,12 +175,40 @@ void draw_vertical_line(UINT16 *base, int x, int y1, int y2)
 	}
 
 }
-
+/*
+ * Reference: Depanshu (February 2023)
+ *
+ * Author: Kevin Oh
+ *
+ * Parameters:
+ *   base       - Pointer to the base frame buffer
+ *   x          - X-coordinate on the screen for the top left the bitmap
+ *   y          - X-coordinate on the screen for the top left the bitmap
+ *   height     - height of the bitmap
+ *   width      - width of the bitmap
+ *   bitmap     - pointer to the bitmap data
+ *
+ * Details:
+ *      The function calculates the starting position of drawing the bitmap
+ *      in the frame buffer based on the provided  coordinates (x, y).
+ *      It then iterates through each row of the bitmap, XORing the bits
+ *      with the corresponding bits in the destination memory.
+ *      The function accounts for aligned and unaligned starting columns.
+ *
+ * Restrictions/Assumption:
+ *  It supports bitmaps with widths that are multiples of 8 bits such as ( 8 x 8, 64 x 94, 96 x 1 ,etc ..)
+ *  Behaviour will be undefined if the input parameters are not correct
+ *  No error and bounds checking is provided
+ *  User is responsible for providing the correct parameters
+ *  Height, width, x and y inputs are to be given in pixels
+ *
+ *  Sample call:
+ *  draw_multi_of_8_bitmap(buffer, x, y, height, width, sprite);
+ */
 void draw_multi_of_8_bitmap(UINT8 *base, int x, int y, int height, int width, UINT8 *bitmap)
 {
     int i;
     int bit_position = x & 7; /*which bit to start drawning on*/
-
 
     /*how many bits to draw on the second longword */
     int draw_sec_word = bit_position == 0 ? 0 : UINT8_SIZE_BITS - bit_position;
