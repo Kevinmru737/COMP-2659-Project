@@ -1,6 +1,6 @@
 
-main: main.o raster.o rast_asm.o
-	cc68x -g main.o raster.o rast_asm.o  -o main
+main: main.o raster.o rast_asm.o bitmaps.o
+	cc68x -g main.o raster.o rast_asm.o bitmaps.o  -o main
 
 main.o: main.c raster.h
 	cc68x -g -c main.c
@@ -10,5 +10,9 @@ raster.o: raster.c raster.h
 
 rast_asm.o: rast_asm.s
 	gen -D -L2 rast_asm.s
+
+bitmaps.o: bitmaps.c bitmaps.h
+	cc68x -g -c bitmaps.c
+
 
 

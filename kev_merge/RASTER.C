@@ -109,7 +109,7 @@ void draw_horizontal_line (UINT16 *base, int x1, int x2, int y, int thickness) {
  *  Sample call:
  *  	plot_pixel(base, 200, 350);
  */
-void plot_pixel(char *base, int x, int y)
+void plot_pixel(UINT8 *base, int x, int y)
 {
   	if (x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT)
   	{
@@ -230,5 +230,35 @@ void draw_multi_of_8_bitmap(UINT8 *base, int x, int y, int height, int width, UI
     }
 
     return;
+
+}
+
+void draw_multi_of_32_bitmap(UINT32 *base, int x, int y, int height, int width, const UINT32 *bitmap )
+{
+    int i;
+    int bit_position = x & 31; /*which bit to start drawning on*/
+
+
+    /*how many bits to draw on the second longword */
+    int draw_sec_long = bit_position == 0 ? 0 : UINT32_SIZE_BITS - bit_position;
+        
+    width = width >> 5;
+    base += OFFSET_TO_UINT32(x,y);
+
+    while (height > 0) {
+        i = width;
+        for (i; i > 0; i--) {
+            *base ^= (*bitmap) >> bit_position;
+            base++;
+            *base ^= draw_sec_long == 0 ? 0 : (*bitmap) << draw_sec_long;
+            bitmap++;
+        }
+
+        height--;
+        base += UINT32_PER_SCANLINE - width;
+    }
+
+    
+    return;   
 
 }
