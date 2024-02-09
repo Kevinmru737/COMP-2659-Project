@@ -51,17 +51,17 @@ void draw_horizontal_line (UINT16 *base, int x1, int x2, int y, int thickness) {
 		/* repeatedly drawing lines underneath the first for thickness */
 		while (curr_thick < thickness) {
 			int dif_unaligned = (x_next_draw - 1);
-			*base = x1_draw == 0 ? 0xFFFF : (0xFFFF) >> (x1_draw);
+			*base ^= x1_draw == 0 ? 0xFFFF : (0xFFFF) >> (x1_draw);
 			base++;	
 			/* drawing the full bytes between x1 and x2 */
 			while (dif_unaligned > 0) {
-				*base = 0xFFFF;
+				*base ^= 0xFFFF;
 				base++;
 				dif_unaligned--;
 			}
 			/* incase the user tries to draw within a single byte*/
 			if (x_next_draw != 0) {
-				*base = /*x2_draw == 0 ? 0 : */(0xFFFF) << (16 - x2_draw);
+				*base ^= /*x2_draw == 0 ? 0 : */(0xFFFF) << (16 - x2_draw);
 				base += (40 - (x_next_draw));
 			}
 			else {
@@ -262,3 +262,20 @@ void draw_multi_of_32_bitmap(UINT32 *base, int x, int y, int height, int width, 
     return;   
 
 }
+
+void draw_triangle (UINT16 *base, int x, int y) {
+	UINT16 *temp = base;
+	int x1 = x + 15;
+	int x2 = x + 16;
+	int y_draw = y;
+	int count = 0;
+
+	for (count; count < 16; count ++) {
+		draw_horizontal_line(temp, x1, x2, y_draw, 2);
+		y_draw += 2;
+		x1--;
+		x2++;
+	}
+}
+
+

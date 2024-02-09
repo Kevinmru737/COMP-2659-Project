@@ -41,6 +41,7 @@ void draw_multi_of_8_bitmap(UINT8 *base, int x, int y, int height, int width, UI
 void clear_screen(UINT32 *base);
 void draw_horizontal_line(UINT16 *base, int x1, int x2, int y, int thickness);
 void draw_vertical_line(UINT16 *base, int x, int y1, int y2);
+void draw_triangle (UINT16 *base, int x, int y);
 void plot_pixel(UINT8 *base, int x, int y);
 
 
