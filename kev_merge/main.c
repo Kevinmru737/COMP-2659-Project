@@ -23,7 +23,7 @@ while(!Cconis()) {
     
     Vsync();
 
-    draw_triangle(base, x1, 240);
+    /*draw_triangle(base, x1, 240);*/
     x1--;
 
 

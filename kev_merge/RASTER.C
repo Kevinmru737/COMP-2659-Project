@@ -29,19 +29,13 @@
  *  	thickness > 0 (and that thickness will not cause attempted drawing outside the screen)
  *
  *  	All parameters are to be given in pixels
- *  
- *	  	This function CAN draw within a single word-sized memory location, however, there are some
- *		restrictions. If x1 is in bit 25, it will always fill in bits 25 - 31, until the next word
- *	  	aligned memory location. Thus drawing within a byte can only be correctly done if x2 is a 
- *  	memory location on the "edge" of a word-sized location. In otherwords to draw inside 
- *  	byte 1 exclusively, which contains bits 15 - 31, x2 must be 31. Drawing for example 
- *  	x1 = 25 and x2 = 28 will not draw correctly, and bits 25-31 will be filled in anyways.
  *
  *  Sample call:
  *  	draw_horizontal_line(base, 0, 250, 300, 14);
  */
 void draw_horizontal_line (UINT16 *base, int x1, int x2, int y, int thickness) {
 
+	UINT16 temp = 0;
 	int curr_thick = 0;
 	base += (x1 / 16) + (y * 40);
 	if ((x1 % 16 != 0) || (x2 % 16 != 0)) {
@@ -51,17 +45,30 @@ void draw_horizontal_line (UINT16 *base, int x1, int x2, int y, int thickness) {
 		/* repeatedly drawing lines underneath the first for thickness */
 		while (curr_thick < thickness) {
 			int dif_unaligned = (x_next_draw - 1);
-			*base ^= x1_draw == 0 ? 0xFFFF : (0xFFFF) >> (x1_draw);
+
+			if (x_next_draw != 0) {
+				*base = x1_draw == 0 ? 0xFFFF : (0xFFFF) >> (x1_draw);
+			}
+			else {
+				temp = 0xFFFF >> x1_draw;
+				temp = temp >> (16 - x2_draw);
+				temp = temp << (16 - x2_draw);
+				*base = temp;
+			}
+			
+			
+			
+			
 			base++;	
 			/* drawing the full bytes between x1 and x2 */
 			while (dif_unaligned > 0) {
-				*base ^= 0xFFFF;
+				*base = 0xFFFF;
 				base++;
 				dif_unaligned--;
 			}
 			/* incase the user tries to draw within a single byte*/
 			if (x_next_draw != 0) {
-				*base ^= /*x2_draw == 0 ? 0 : */(0xFFFF) << (16 - x2_draw);
+				*base = x2_draw == 0 ? 0 : (0xFFFF) << (16 - x2_draw);
 				base += (40 - (x_next_draw));
 			}
 			else {
