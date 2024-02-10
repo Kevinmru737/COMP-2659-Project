@@ -2,7 +2,7 @@
 #include "models.h"
 #include "events.h"
 #include "types.h"
-
+#include "osbind.h"
 
 void print_full_player_location(Player* test_player);
 void print_player(Player* test_player);
@@ -10,31 +10,21 @@ void print_player(Player* test_player);
 int main () {
 
     Player* test_player = create_player(250, 250);
+    char user_input = 0;
 
-    /*
-    Triangle test_triangle = {240, 240, 1};
-    Ground test_ground = {0};
-    Platform test_platform = {260, 260, 2};
-    */
-   /* print_full_player_location(test_player);*/
     print_player(test_player);
+    while ((user_input = Cnecin()) != '\033'){
+        if ((user_input) == ' ') {
+            player_jumping(test_player);
+            printf("player jumped\n");
+        }
 
-    jump(test_player);
-    move_player(test_player);
-    while (test_player->top_left.y_pos > 250) {
-        move_player(test_player);
-        print_player(test_player);
     }
-    stop_jump(test_player);
+    
+        
 
     print_player(test_player);
     
-    /* test_player y_pos = %i\n 
-            test_player vert velocity = %i\n test_player is_jumping = %s\n"
-            test_player.x_pos, test_player.y_pos, test_player.vert_vel,
-            test_player.is_jumping);*/
-
-
 
     return 0;
 }
