@@ -1,8 +1,17 @@
 #include "models.h"
 
-/*
-	Initiates the jump sequence fo the player
-*/
+Player* create_player(int x, int y) {
+	Player* new_player;
+	new_player->top_left.x_pos = x;
+	new_player->top_left.y_pos = y;
+	new_player->top_right.x_pos = x + 31;
+	new_player->top_right.y_pos = y;
+	new_player->bot_left.x_pos = x;
+	new_player->bot_left.y_pos = y - 31;
+	new_player->bot_right.x_pos = x + 31;
+	new_player->bot_right.y_pos = y - 31;
+	return new_player;
+}
 void jump(Player * player) {
 
 	player->is_jumping = TRUE;
@@ -46,3 +55,4 @@ void move_platform_(Platform* platform) {
 	platform->top_right.x_pos += platform->hor_vel;
 
 };
+
