@@ -13,11 +13,6 @@
 
 
 
-typedef int bool;
-
-#define FALSE 0
-#define TRUE 1
-
 void test_32_bit_drawer();
 void test_draw_32_bitmap(FILE *file, UINT32* input_bitmap, UINT32* expected_bitmap, 
                          int width, int height, int x , int y, bool start_pixel_not_alligned, int test_num);
