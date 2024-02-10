@@ -1,137 +1,68 @@
-#include "models.h"
+#include "types.h"
 
-/*
-Initiates the jump sequence for the player
+
+/* Represents a single vertex of a polygon*/
+typedef struct 
+{
+	int x_pos, y_pos;
+}Vertex;
+
+
+
+/* The four vertices define the player square. 
+The player is fixed in its horizontal position but can move in the vertical direction.
 */
-void jump(Player * player) {
+typedef struct 
+{
+	Vertex top_left, top_right, bot_left,bot_right;
+	int vert_vel;
+	bool is_jumping;
+} Player;
 
-	player->is_jumping = TRUE;
-	player->vert_vel = 5;
-
-}
 
 
-/* 
-   Moves the player in the vertical direction by updating its y position
-   with its vertical velocity
+
+/*The triangle can be thought of as two diagnol lines with a slope
+  a horizontal line. The slope of these lines will be used to determine
+  whether a collision has occurred between the player and the triangle.
+  The triangle is represented using its three vertices ( bot.left ,top and right).
+  All triangles will be right angled
 */
-void move_player(Player * player) {
-	player->top_left.y_pos += (player->vert_vel);
-	player->top_right.y_pos += (player->vert_vel);
-	player->bot_left.y_pos += (player->vert_vel);
-	player->bot_right.y_pos += (player->vert_vel);
-	(player->vert_vel)--;
-}
+typedef struct 
+{	
+	int slope;
+	Vertex bot_left, top, bot_right;
+	int hor_vel;
+} Triangle;
 
 
 
-/* 
-Sets the jump property to false to stop the player's jump sequence
-*/
-void stop_jump(Player * player) {
-
-	player->is_jumping = FALSE;
-	player->vert_vel = 0;
-}
-
-
-/* 
-Moves the triangle in the horizontal left direction
-*/
-void move_triangle_obs(Triangle* triangle) {
-
-	triangle->bot_left.x_pos += triangle->hor_vel;
-	triangle->top.x_pos += triangle->hor_vel;
-	triangle->bot_right.x_pos += triangle->hor_vel;
-}
+/*Will be static, the player is safe whenever in contact with this */
+typedef struct 
+{
+	int y_pos;
+} Ground;
 
 
 
-/* 
-Moves the platform in the horizontal left direction
-*/
-void move_platform_(Platform* platform) {
-
-	platform->top_left.x_pos += platform->hor_vel;
-	platform->top_right.x_pos += platform->hor_vel;
-
-	platform->bot_left.x_pos += platform->hor_vel;
-	platform->bot_right.x_pos += platform->hor_vel;
-
-};
+/*A single platfrom that the player can "glide" on.
+  Only the top edge is safe for collision*/
+typedef struct 
+{	Vertex top_left, top_right, bot_left, bot_right;
+	int hor_vel;
+} Platform;
 
 
 
-/*Constructor for creating an instance of player
-  the player is 32 * 32 , so we only need its top left (hotspot) 
-   to set other properties. Subtracting and adding by 31 because
-   of inclusivity*/
-Player* create_player(int x, int y) {
-	Player* new_player;
 
-	new_player->top_left.x_pos = x;
-	new_player->top_left.y_pos = y;
+/*--------------Funcitons------------------*/
 
-	new_player->top_right.x_pos = x + 31;
-	new_player->top_right.y_pos = y;
+void jump(Player * player);
+void move_player(Player * player);
+void stop_jump(Player * player);
+void move_triangle_obs(Triangle* triangle);
+void move_platform_(Platform* platform);
 
-	new_player->bot_left.x_pos = x;
-	new_player->bot_left.y_pos = y - 31;
-
-	new_player->bot_right.x_pos = x + 31;
-	new_player->bot_right.y_pos = y - 31;
-
-	new_player->vert_vel = 0;
-	new_player->is_jumping = FALSE;
-
-	return new_player;
-}
-
-/*Constructor for creating an instance of triangle obstacle.
-The given x and y cordinate are for the bottom left vertex of the triangle.
-The height and width of the each triangle will be same, 16 and 32 respectivly.
-*/
-Triangle* create_triangle(int x, int y, int hor_vel) {
-
-	Triangle* new_triangle;
-
-	new_triangle->slope = 2;
-
-	new_triangle->bot_left.x_pos = x;
-	new_triangle->bot_left.y_pos = y;
-
-	new_triangle->top.x_pos = x + 16;
-	new_triangle->top.y_pos = y + 32;
-	
-	new_triangle->bot_right.x_pos = x + 32;
-	new_triangle->bot_right.y_pos = y;
-
-	new_triangle->hor_vel = hor_vel;
-	return new_triangle;
-}
-
-
-/*Constructor for creating an instance of platform obstacle.
-The given x and y cordinate are for the top left  vertex of the paltform.
-*/
-Platform* create_platform(int x_top_left, int y_top_left, int width, int height, int hor_vel) {
-
-	Platform* new_paltform;
-
-	new_paltform->top_left.x_pos = x_top_left;
-	new_paltform->top_left.y_pos = y_top_left;
-
-	new_paltform->bot_left.x_pos = x_top_left;
-	new_paltform->bot_right.y_pos = y_top_left - height;
-
-
-	new_paltform->top_right.x_pos = x_top_left + width;
-	new_paltform->top_right.y_pos = y_top_left;
-
-	new_paltform->bot_right.x_pos = x_top_left + width;
-	new_paltform->bot_right.y_pos = y_top_left - height;
-
-	new_paltform->hor_vel = hor_vel;
-	return new_paltform;
-}
-
+Player* create_player(int x, int y );
+Triangle* create_triangle(int x, int y, int hor_vel);
+Platform* create_platform(int x_top_left, int y_top_left, int width, int height, int hor_vel);
