@@ -9,6 +9,9 @@ typedef unsigned long UINT32;
 #define UINT16_SIZE_BITS 16
 #define UINT8_SIZE_BITS 8
 
+typedef int bool;
+#define FALSE 0
+#define TRUE 1
 
 #define UINT32_PER_SCANLINE 20
 #define UINT16_PER_SCANLINE 40
