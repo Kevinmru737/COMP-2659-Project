@@ -297,7 +297,55 @@ void draw_8_bit_bitmap_row(UINT8 *base, const UINT8 *bitmap, int bytes_per_row, 
 }
 
 
+/*
 
+void clear_32_bit_bitmap(UINT32 *base, int x, int y, int height, int width )
+{
+    int i;
+    int longs_per_row;
+
+    UINT32 first_long_mask = 0xffffffff, second_long_mask  = 0xffffffff;
+
+    int start_bit_position = x & 31; /*which bit to start clearning on on*/
+
+    first_long_mask = first_long_mask << (32 -start_bit_position);
+    second_long_mask = second_long_mask >> start_bit_position;
+
+
+    /*how many longs wide is the bitmap*/   
+    longs_per_row = width >> 5;
+    base += OFFSET_TO_UINT32(x,y); /*which long to start drawing on*/
+
+    while (height > 0) {
+         clear_32_bit_bitmap_row(base,longs_per_row,start_bit_position );
+         base += UINT32_PER_SCANLINE;
+    
+ }
+
+    }
+      
+
+
+
+void clear_32_bit_bitmap_row(UINT32 *base, int longs_per_row, int start_bit_position ) {
+   int i = 0;
+    if (start_bit_position == 0) {
+        for (i; i < longs_per_row; i++) {
+            *base++ = 0x0;
+        }
+    } else {
+        for (i; i < longs_per_row; i++) {
+            *base &= first_long_mask;
+            base++;
+            *base &= second_long_mask;
+        }
+
+    }
+
+}
+
+
+*/
 
 
 
