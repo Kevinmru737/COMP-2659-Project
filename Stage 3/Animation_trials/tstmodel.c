@@ -14,12 +14,17 @@ int main () {
     Player* test_player = create_player(250, 250);
     char user_input = 0;
     UINT16* base = Physbase();
+    int x_test = 623;
 
     
     draw_horizontal_line(base, test_player->top_left.x_pos,
                                 test_player->top_right.x_pos, test_player->top_left.y_pos, 32);
 
+    
     while ((user_input = Cnecin()) != '\033'){
+        
+
+        
    
         if ((user_input) == ' ') {
             draw_horizontal_line(base, test_player->top_left.x_pos,
@@ -38,6 +43,13 @@ int main () {
             test_player->top_left.y_pos = 250;
             draw_horizontal_line(base, test_player->top_left.x_pos,
                                 test_player->top_right.x_pos, test_player->top_left.y_pos, 32);
+        }
+        
+        while(!Cconis()) {
+            draw_triangle(base, x_test, 250);
+            Vsync();
+            draw_triangle(base,x_test, 250);
+            x_test--;
         }
 
     }
