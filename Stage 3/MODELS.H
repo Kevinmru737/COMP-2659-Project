@@ -11,6 +11,7 @@ typedef struct
 
 /* The four vertices define the player square. 
 The player is fixed in its horizontal position but can move in the vertical direction.
+The top_left vertex is considered the hotspot.
 */
 typedef struct 
 {
@@ -22,15 +23,16 @@ typedef struct
 
 
 
-/*The triangle can be thought of as two diagnol lines with a slope
+/*The triangle can be thought of as two diagonal lines with a slope
   a horizontal line. The slope of these lines will be used to determine
   whether a collision has occurred between the player and the triangle.
-  The triangle is represented using its three vertices ( bot.left ,top and right).
+  The triangle is represented using its three vertices ( bot.left, top and bot.right).
   All triangles will be right angled
 */
 typedef struct 
 {	
 	int slope;
+	Vertex hot_spot;
 	Vertex bot_left, top, bot_right;
 	int hor_vel;
 } Triangle;
@@ -55,7 +57,7 @@ typedef struct
 
 
 
-/*--------------Funcitons------------------*/
+/*--------------Functions------------------*/
 
 void jump(Player * player);
 void move_player(Player * player);
@@ -65,4 +67,6 @@ void move_platform_(Platform* platform);
 
 Player* create_player(int x, int y );
 Triangle* create_triangle(int x, int y, int hor_vel);
-Platform* create_platform(int x_top_left, int y_top_left, int width, int height, int hor_vel);
+Platform* create_platform(int x, int y, int width, int height, int hor_vel);
+
+#define OBSTACLE_VELOCITY 3
