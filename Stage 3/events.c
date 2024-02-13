@@ -12,7 +12,7 @@
  * Details:
  *   Calls the function to move the triangle
  */
-void triangle_moving(Triangle* triangle, int x, int y, int hor_vel) {
+void triangle_moving(Triangle* triangle) {
     move_triangle(triangle);
 }
 
@@ -25,7 +25,7 @@ void triangle_moving(Triangle* triangle, int x, int y, int hor_vel) {
  *   Calls the function to move the platform.
  *
  */
-void platform_moving(Platform* platform, int x, int y, int width, int height, int hor_vel) {
+void platform_moving(Platform* platform) {
     move_platform(platform);
 }
 
@@ -88,6 +88,7 @@ void increment_attempt() {
  *   on screen.
  */
 bool ground_collision(Player* player, Ground* ground) {
+    printf("wahoo");
     if (player->bot_left.y_pos >= ground->y_pos) {
         return TRUE;
     }

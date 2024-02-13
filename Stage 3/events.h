@@ -3,8 +3,8 @@
 
 
 /*** Synchronous Events***/
-void triangle_moving(Triangle* int x, int y, int hor_vel);
-void platform_moving(Platform* platform, int x, int y, int width, int height, int hor_vel);
+void triangle_moving(Triangle* triangle);
+void platform_moving(Platform* platform);
 void player_death();
 void player_victory();
 void player_jumping(Player* player);
