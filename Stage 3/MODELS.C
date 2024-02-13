@@ -66,7 +66,7 @@ void stop_jump(Player * player) {
 }
 /* Moves the triangle in the horizontal left direction
 */
-void move_triangle_obs(Triangle* triangle) {
+void move_triangle(Triangle* triangle) {
 
 	triangle->bot_left.x_pos -= triangle->hor_vel;
 	triangle->top.x_pos -= triangle->hor_vel;
@@ -103,7 +103,7 @@ Triangle* create_triangle(int x, int y, int hor_vel) {
 	new_triangle->top.y_pos = y;
 
 	new_triangle->slope = 2;
-	new_triangle->hor_vel = OBSTACLE_VELOCITY;
+	new_triangle->hor_vel = hor_vel;
 
 	return new_triangle;
 }
@@ -129,6 +129,6 @@ Platform* create_platform(int x, int y, int width, int height, int hor_vel) {
 	new_platform->bot_right.x_pos = x + (width - 1);
 	new_platform->bot_right.y_pos = y + (height - 1);
 
-	new_platform->hor_vel = OBSTACLE_VELOCITY;
+	new_platform->hor_vel = hor_vel;
 	return new_platform;
 }
