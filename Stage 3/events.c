@@ -119,6 +119,7 @@ void increment_attempt() {
  *   on screen.
  */
 bool ground_collision(Player* player, Ground* ground) {
+    printf("wahoo");
     if (player->bot_left.y_pos >= ground->y_pos) {
         return TRUE;
     }
