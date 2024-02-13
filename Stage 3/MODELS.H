@@ -50,10 +50,23 @@ typedef struct
 /*A single platfrom that the player can "glide" on.
   Only the top edge is safe for collision*/
 typedef struct 
-{	Vertex top_left, top_right, bot_left, bot_right;
+{	
+	Vertex top_left, top_right, bot_left, bot_right;
 	int hor_vel;
 } Platform;
 
+
+/* Keeps track of the score as well as a position for printing to the screen */
+typedef struct
+{
+	Vertex top_left;
+	int attempt_number;
+} Attempt;
+
+typedef struct
+{
+	Vertex top_left;
+} Victory_Wall;
 
 
 
@@ -62,8 +75,8 @@ typedef struct
 void jump(Player * player);
 void move_player(Player * player);
 void stop_jump(Player * player);
-void move_triangle_obs(Triangle* triangle);
-void move_platform_(Platform* platform);
+void move_triangle(Triangle* triangle);
+void move_platform(Platform* platform);
 
 Player* create_player(int x, int y );
 Triangle* create_triangle(int x, int y, int hor_vel);
