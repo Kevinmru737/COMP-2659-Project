@@ -5,7 +5,7 @@ typedef unsigned char UINT8;
 typedef unsigned int  UINT16;
 typedef unsigned long UINT32;
 
-typedef int bool;
+typedef unsigned int bool;
 #define FALSE 0
 #define TRUE 1
 

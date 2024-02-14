@@ -81,5 +81,6 @@ void move_platform(Platform* platform);
 Player* create_player(int x, int y );
 Triangle* create_triangle(int x, int y, int hor_vel);
 Platform* create_platform(int x, int y, int width, int height, int hor_vel);
+Ground* create_ground(int y);
 
 #define OBSTACLE_VELOCITY 3
