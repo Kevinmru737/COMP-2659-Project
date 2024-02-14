@@ -72,17 +72,17 @@ void player_jumping(Player* player) {
 */
 bool player_triangle_collison( Player* player , Triangle * triangle){
     
-    if( triangle->bot_left.x_pos > player->bot_right.x_pos||
-        triangle->bot_right.x_pos > player->bot_left.x_pos||
-        triangle->top.y_pos < player->bot_right.y_pos||
-        triangle->bot_right.y_pos > player->top_left.y_pos) {
+    if( triangle->bot_left.x_pos > player->bot_right.x_pos ||     /* triangle is way off right of the player */ 
+        player->bot_left.x_pos > triangle->bot_right.x_pos ||    /* triangle is way off left of the player */ 
+        player->top_right.y_pos > triangle->bot_left.y_pos ||    /* triangle is above the player */ 
+        triangle->top.y_pos > player->bot_left.y_pos   )           /* triangle is below the player */ 
+         {
 
-            return FALSE;
+            return false;
         }
 
-    return player_triangle_collison_helper(player, triangle);
+    return player_triangle_collison_helper(player, triangle)
 
-}
 
 
 
@@ -218,25 +218,24 @@ player_triangle_collison_helper( Player* player , Triangle * triangle) {
     y = -2 * (player->bot_right.x_pos - triangle->bot_left.x_pos) + triangle->bot_left.y_pos;
 
     if (y == player->bot_left.y_pos) {
-        return TRUE;
+        return true;
     }
 
     /*Check if player is along the downward diagnol line from the vertex*/
     y = 2 * (player->bot_left.x_pos - triangle->top.x_pos) + triangle->top.y_pos;
 
     if (y == player->bot_left.y_pos) {
-        return TRUE;
+        return true;
     }
 
     /*Check if player is bottom edge of the player collides with  the top vertex of the triangle*/
     if( player->bot_left.y_pos == triangle->top.y_pos &&
         player->bot_right.x_pos >= triangle->top.x_pos &&
         player->bot_left.x_pos <= triangle->top.x_pos) {
-            return TRUE;
+            return true;
         }
 
     /* No collison occured */
-    return FALSE;
+    return false;
 
 }
-
