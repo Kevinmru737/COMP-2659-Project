@@ -8,27 +8,32 @@ void print_full_player_location(Player* test_player);
 void print_player(Player* test_player);
 
 int main () {
-    Ground* test_ground = {272};
-    Player* test_player = create_player(272, 272);
+    Ground* test_ground;
+    Player* test_player;
     char user_input = 0;
-
-    print_player(test_player);
+    create_player(272, 272, test_player);
+    create_ground(272, test_ground);
+    
     while ((user_input = Cnecin()) != '\033'){
-
-        if ((user_input) == ' ') {
+        if (user_input == ' ') {
+            printf("prejump");
             jump_request(test_player);
             printf("player jumped\n");
+            print_player(test_player);
         }
 
-        while (test_player->is_jumping == TRUE) {
+        if (test_player->is_jumping == TRUE) {
             
             player_jumping(test_player);
             printf("player jumping\n");
-            
+
             if(ground_collision(test_player, test_ground) == TRUE) {
                 stop_jump(test_player);
                 printf("ground collision detected\n");
             }
+            
+            
+                
         }
         
     }

@@ -34,8 +34,8 @@ void initialize_player(int x, int y, Player* player) {
  * Purpose: Sets the appropriate conditions to simulate a player's initial
  *			jump conditions.
  */
-void jump(Player * player) {
-
+void jump(Player* player) {
+	player->is_jumping = FALSE;
 	player->is_jumping = TRUE;
 	player->vert_vel = 5; 
 
@@ -94,7 +94,13 @@ void move_platform(Platform* platform) {
 	Creates a Triangle object at a specfied x and y value and returns it
 */
 
+<<<<<<< HEAD
 void initialize_triangle(int x, int y, int hor_vel, Triangle* new_triangle) {
+=======
+Triangle* create_triangle(int x, int y, int hor_vel) {
+	Triangle triangle;
+	Triangle* new_triangle = &triangle;
+>>>>>>> stage-3-kevins-changes
 	new_triangle->hot_spot.x_pos = x;
 	new_triangle->hot_spot.y_pos = y;
 
@@ -121,7 +127,14 @@ void initialize_triangle(int x, int y, int hor_vel, Triangle* new_triangle) {
  * Details: ......TBA
  *
  */
+<<<<<<< HEAD
 void initialize_platform(int x, int y, int width, int height, int hor_vel, Platform* new_platform) {
+=======
+Platform* create_platform(int x, int y, int width, int height, int hor_vel) {
+	Platform platform;
+	Platform* new_platform = &platform;
+	
+>>>>>>> stage-3-kevins-changes
 	new_platform->top_left.x_pos = x;
 	new_platform->top_left.y_pos = y;
 
@@ -136,4 +149,13 @@ void initialize_platform(int x, int y, int width, int height, int hor_vel, Platf
 
 	new_platform->hor_vel = hor_vel;
 	return new_platform;
+}
+
+Ground* create_ground(int y) {
+	Ground* ptr_ground;
+
+	
+	ptr_ground->y_pos = y;
+
+	return ptr_ground;
 }
