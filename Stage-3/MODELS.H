@@ -74,13 +74,13 @@ typedef struct
 /* Contains all the releveant structure which will be used in the game*/
 typedef struct {
 	Player player;
-	Triangle triangles[5];
+	Triangle triangles10];
 	int num_active_triangles;
 	Ground ground;
-	Platform platfrom[5];
+	Platform platfrom[10];
 	int num_active_platforms;
-	Attempt attempt;
 	Victory_Wall victory_wall;
+	bool draw_victory_wall;
 
 } Model;
 
