@@ -77,7 +77,8 @@ void stop_jump(Player * player);
 void move_triangle(Triangle* triangle);
 void move_platform(Platform* platform);
 
-Player* create_player(int x, int y );
-Triangle* create_triangle(int x, int y, int hor_vel);
-Platform* create_platform(int x, int y, int width, int height, int hor_vel);
+void initialize_player(int x, int y, Player* player);
+void initialize_triangle(int x, int y, int hor_vel, Triangle * triangle);
+void initialize_platform(int x, int y, int width, int height, int hor_vel, Platform * Platform);
+
 
