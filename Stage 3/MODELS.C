@@ -16,7 +16,6 @@
  *  0 <= y < 400
  */
 void initialize_player(int x, int y, Player* player) {
-	Player* new_player;
 	new_player->top_left.x_pos = x;
 	new_player->top_left.y_pos = y;
 	new_player->top_right.x_pos = x + 31;
@@ -96,7 +95,6 @@ void move_platform(Platform* platform) {
 */
 
 void initialize_triangle(int x, int y, int hor_vel, Triangle* new_triangle) {
-	Triangle* new_triangle;
 	new_triangle->hot_spot.x_pos = x;
 	new_triangle->hot_spot.y_pos = y;
 
