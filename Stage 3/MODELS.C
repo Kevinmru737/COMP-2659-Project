@@ -16,18 +16,17 @@
  *  0 <= y < 400
  */
 void initialize_player(int x, int y, Player* player) {
-	new_player->top_left.x_pos = x;
-	new_player->top_left.y_pos = y;
-	new_player->top_right.x_pos = x + 31;
-	new_player->top_right.y_pos = y;
-	new_player->bot_left.x_pos = x;
-	new_player->bot_left.y_pos = y + 31;
-	new_player->bot_right.x_pos = x + 31;
-	new_player->bot_right.y_pos = y + 31;
+	player->top_left.x_pos = x;
+	player->top_left.y_pos = y;
+	player->top_right.x_pos = x + 31;
+	player->top_right.y_pos = y;
+	player->bot_left.x_pos = x;
+	player->bot_left.y_pos = y + 31;
+	player->bot_right.x_pos = x + 31;
+	player->bot_right.y_pos = y + 31;
 
-	new_player->vert_vel = 0;
-	new_player->is_jumping = FALSE;
-	return new_player;
+	player->vert_vel = 0;
+	player->is_jumping = FALSE;
 }
 /* Author: Depanshu
  *
@@ -35,7 +34,6 @@ void initialize_player(int x, int y, Player* player) {
  *			jump conditions.
  */
 void jump(Player* player) {
-	player->is_jumping = FALSE;
 	player->is_jumping = TRUE;
 	player->vert_vel = 5; 
 
@@ -53,11 +51,14 @@ void jump(Player* player) {
  */
 void move_player(Player * player) {
 	if (player->is_jumping == TRUE) {
-		player->top_left.y_pos -= (player->vert_vel);
-		player->top_right.y_pos -= (player->vert_vel);
-		player->bot_left.y_pos -= (player->vert_vel);
-		player->bot_right.y_pos -= (player->vert_vel);
-		(player->vert_vel)--;
+		if (player->vert_vel >= -5) {
+			player->top_left.y_pos -= (player->vert_vel);
+			player->top_right.y_pos -= (player->vert_vel);
+			player->bot_left.y_pos -= (player->vert_vel);
+			player->bot_right.y_pos -= (player->vert_vel);
+			(player->vert_vel)--;
+		}
+		
 	}
 }
 
@@ -65,7 +66,6 @@ void move_player(Player * player) {
 /* Sets the jump property to false to stop the player's jump sequence
 */
 void stop_jump(Player * player) {
-
 	player->is_jumping = FALSE;
 	player->vert_vel = 0;
 }
@@ -84,7 +84,6 @@ void move_triangle(Triangle* triangle) {
 /* Moves the platform in the horizontal left direction
 */
 void move_platform(Platform* platform) {
-
 	platform->top_left.x_pos -= platform->hor_vel;
 	platform->top_right.x_pos -= platform->hor_vel;
 
@@ -94,13 +93,7 @@ void move_platform(Platform* platform) {
 	Creates a Triangle object at a specfied x and y value and returns it
 */
 
-<<<<<<< HEAD
 void initialize_triangle(int x, int y, int hor_vel, Triangle* new_triangle) {
-=======
-Triangle* create_triangle(int x, int y, int hor_vel) {
-	Triangle triangle;
-	Triangle* new_triangle = &triangle;
->>>>>>> stage-3-kevins-changes
 	new_triangle->hot_spot.x_pos = x;
 	new_triangle->hot_spot.y_pos = y;
 
@@ -114,8 +107,6 @@ Triangle* create_triangle(int x, int y, int hor_vel) {
 	new_triangle->top.y_pos = y;
 
 	new_triangle->hor_vel = hor_vel;
-
-	return new_triangle;
 }
 
 
@@ -127,14 +118,7 @@ Triangle* create_triangle(int x, int y, int hor_vel) {
  * Details: ......TBA
  *
  */
-<<<<<<< HEAD
 void initialize_platform(int x, int y, int width, int height, int hor_vel, Platform* new_platform) {
-=======
-Platform* create_platform(int x, int y, int width, int height, int hor_vel) {
-	Platform platform;
-	Platform* new_platform = &platform;
-	
->>>>>>> stage-3-kevins-changes
 	new_platform->top_left.x_pos = x;
 	new_platform->top_left.y_pos = y;
 
@@ -148,14 +132,8 @@ Platform* create_platform(int x, int y, int width, int height, int hor_vel) {
 	new_platform->bot_right.y_pos = y + (height - 1);
 
 	new_platform->hor_vel = hor_vel;
-	return new_platform;
 }
 
-Ground* create_ground(int y) {
-	Ground* ptr_ground;
-
-	
+void initialize_ground(int y, Ground* ptr_ground) {
 	ptr_ground->y_pos = y;
-
-	return ptr_ground;
 }

@@ -1,3 +1,6 @@
+#ifndef MODELS_H
+#define MODELS_H
+
 #include "types.h"
 #define OBSTACLE_VELOCITY 3
 
@@ -77,15 +80,9 @@ void stop_jump(Player * player);
 void move_triangle(Triangle* triangle);
 void move_platform(Platform* platform);
 
-<<<<<<< HEAD
 void initialize_player(int x, int y, Player* player);
 void initialize_triangle(int x, int y, int hor_vel, Triangle * triangle);
-void initialize_platform(int x, int y, int width, int height, int hor_vel, Platform * Platform);
+void initialize_platform(int x, int y, int width, int height, int hor_vel, Platform * platform);
+void initialize_ground(int y, Ground* ground);
 
-=======
-Player* create_player(int x, int y );
-Triangle* create_triangle(int x, int y, int hor_vel);
-Platform* create_platform(int x, int y, int width, int height, int hor_vel);
-Ground* create_ground(int y);
->>>>>>> stage-3-kevins-changes
-
+#endif

@@ -8,32 +8,48 @@ void print_full_player_location(Player* test_player);
 void print_player(Player* test_player);
 
 int main () {
-    Ground* test_ground;
-    Player* test_player;
+    Ground uninit_ground;
+    Player uninit_player;
+    Platform uninit_platform;
+
+    Ground* test_ground = &uninit_ground;
+    Player* test_player = &uninit_player;
+    Platform* test_platform = &uninit_platform;
     char user_input = 0;
-    create_player(272, 272, test_player);
-    create_ground(272, test_ground);
-    
+
+    initialize_player(272, 241, test_player);
+    initialize_ground(272, test_ground);
+    initialize_platform(300, 250, 50, 30, 1, test_platform);
+
+    print_player(test_player);
     while ((user_input = Cnecin()) != '\033'){
-        if (user_input == ' ') {
-            printf("prejump");
+
+        if ((user_input) == ' ') {
             jump_request(test_player);
             printf("player jumped\n");
             print_player(test_player);
         }
 
-        if (test_player->is_jumping == TRUE) {
+        if ((user_input) == 'p') {
+            while(platform_collision_unsafe(test_player, test_platform) == FALSE) {
+                printf("platform x pos:%i", test_platform->top_left.x_pos);
+                platform_moving(test_platform);
+            }
+            
+        }
+
+        while (test_player->is_jumping == TRUE) {
             
             player_jumping(test_player);
             printf("player jumping\n");
-
+            
             if(ground_collision(test_player, test_ground) == TRUE) {
                 stop_jump(test_player);
                 printf("ground collision detected\n");
+                printf("ground y pos %i: ", test_ground->y_pos);
+                printf("player bot-left y pos %i: ", test_player->bot_left.y_pos);
+                print_player(test_player);
             }
-            
-            
-                
         }
         
     }

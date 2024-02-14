@@ -1,7 +1,7 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 #include "types.h"
-#include "models.h
+#include "models.h"
 /*** Synchronous Events***/
 void triangle_moving(Triangle* triangle);
 void platform_moving(Platform* platform);

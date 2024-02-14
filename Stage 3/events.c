@@ -1,4 +1,4 @@
-
+#include "events.h"
 
 /****************************** SYNCHRONOUS EVENTS ******************************/
 
@@ -77,12 +77,12 @@ bool player_triangle_collison( Player* player , Triangle * triangle){
     if( triangle->bot_left.x_pos > player->bot_right.x_pos||
         triangle->bot_right.x_pos > player->bot_left.x_pos||
         triangle->top.y_pos < player->bot_right.y_pos||
-        triangle->bot_right.y_pos > player->top_left.y_pos||) {
+        triangle->bot_right.y_pos > player->top_left.y_pos) {
 
-            return false;
+            return FALSE;
         }
 
-    return player_triangle_collison_helper(player, triangle)
+    return player_triangle_collison_helper(player, triangle);
 
 
 }
@@ -120,7 +120,7 @@ void increment_attempt() {
  *   on screen.
  */
 bool ground_collision(Player* player, Ground* ground) {
-    if (player->bot_left.y_pos >= ground->y_pos) {
+    if (player->bot_left.y_pos >=  ground->y_pos) {
         return TRUE;
     }
     return FALSE;
@@ -219,17 +219,17 @@ bool player_triangle_collison_helper( Player* player , Triangle * triangle) {
     int y;
 
     /*Check if player is along the right diagnol line towards vertex */
-    y = 2 * (Player->bot_right.x_pos - triangle->bot_left.x_pos) + triangle->bot_left.y_pos;
+    y = 2 * (player->bot_right.x_pos - triangle->bot_left.x_pos) + triangle->bot_left.y_pos;
 
-    if (y == Player->bot_left.y_pos) {
-        return true;
+    if (y == player->bot_left.y_pos) {
+        return TRUE;
     }
 
     /*Check if player is along the downward diagnol line from the vertex*/
-    y = -2 * (Player->bot_left.x_pos - triangle->top.x_pos) + triangle->top.y_pos;
+    y = -2 * (player->bot_left.x_pos - triangle->top.x_pos) + triangle->top.y_pos;
 
-    if (y == Player->bot_left.y_pos) {
-        return true;
+    if (y == player->bot_left.y_pos) {
+        return TRUE;
     }
 
     /*Check if player is bottom edge of the player collides wtiht the top vertex of the triangle*/
@@ -237,10 +237,10 @@ bool player_triangle_collison_helper( Player* player , Triangle * triangle) {
     if( player->bot_left.y_pos == triangle->top.y_pos &&
         player->bot_right.x_pos >= triangle->top.x_pos &&
         player->bot_left.x_pos <= triangle->top.x_pos) {
-            return true;
+            return TRUE;
         }
 
     /* No collison occured */
-    return false;
+    return FALSE;
 
 }
