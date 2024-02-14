@@ -8,7 +8,7 @@
  *          a triangle object right to left across the screen.
  *
  * Details:
- *   Calls the function to move the triangle
+ *   Calls the function to move the triangle in models.h
  */
 void triangle_moving(Triangle* triangle) {
     move_triangle(triangle);
@@ -21,7 +21,7 @@ void triangle_moving(Triangle* triangle) {
  *          a platform object right to left across the screen.
  *
  * Details:
- *   Calls the function to move the platform.
+ *   Calls the function to move the platform in models.h
  *
  */
 void platform_moving(Platform* platform) {
@@ -49,7 +49,7 @@ void player_victory() {
  *          still jumping.
  *
  * Details:
- *   Calls the function to move the player (simulates gravity), only y-position
+ *   Calls the function to move the player (simulates gravity) in models.h, only y-position
  *   of the player is affected.
  *
  */
@@ -61,17 +61,15 @@ void player_jumping(Player* player) {
 
 
 
+
 /* Author: Depanshu
- *
- * Purpose: This event occurs every time a triangle obstacle moves.
- *
- * Details:
-*           This function checks whether the player has collided with the player. It first checks
-*           if the player and triangle share the same space since they are both 32 x 32.
-*           It return false if they don't. If they do share the same 'space',
-*           it calls on a helper function to check wheteter the player has collided with
-*           the triangle
- */
+* Purpose: Performs a preliminary collision check between a player and a triangle.
+*
+* This function quickly determines if a detailed collision check is necessary
+*  by comparing the  positions of the player and triangle, allowing for early
+*  exit in clear no-collision cases. If a potential collision is detected,
+*  it calls `player_triangle_collison_helper` to check
+*/
 bool player_triangle_collison( Player* player , Triangle * triangle){
     
     if( triangle->bot_left.x_pos > player->bot_right.x_pos||
@@ -84,8 +82,8 @@ bool player_triangle_collison( Player* player , Triangle * triangle){
 
     return player_triangle_collison_helper(player, triangle)
 
-
 }
+
 
 
 /****************************** ASYNCHRONOUS EVENTS ******************************/
@@ -201,21 +199,19 @@ void reset_attempt(Attempt* prev_attempt_number) {
 }
 
 /* Author: Depabshu
- *
- * Purpose: This event checks for the player/triangle  collision.
+*
+ * Purpose: This function checks for collision between a player and a triangle.
  *
  * Details:
- *   Returns TRUE if a collision was detected and FALSE if there is no collision.
- *   The trianlge can be be represented as being made up of 3 lines. The player can 
- *   collide along the two diagnol lines of the triangle. The slope of the lines
- *   has been calculted to be 2 and -2 from the bitmap. There are only three
- *   ways the player can collide with the triangle
-        1: The bottom right edge of the player can collide with the diagonal line from the bottom left of the triangle
-        2: The whole bottom edge(line) of the player can collide with the top vertex of the triangle
-        3: The bottom left edge of the player can collide with the diagonal line from the top vertex of the triangle                                                        
- *
+ *   - Returns TRUE if a collision was detected and FALSE if there is no collision.
+ *   - The triangle is represented by three lines, and collision can occur along its two diagonal lines.
+ *   - The slopes of the diagonal lines have been calculated to be 2 and -2 from the bitmap data.
+ *   - There are three possible collision scenarios:
+ *       1: The bottom-right edge of the player collides with the diagonal line from the bottom-left vertex of the triangle.
+ *       2: The entire bottom edge (line) of the player collides with the top vertex of the triangle.
+ *       3: The bottom-left edge of the player collides with the diagonal line from the top vertex of the triangle.
  */
-bool player_triangle_collison_helper( Player* player , Triangle * triangle) {
+player_triangle_collison_helper( Player* player , Triangle * triangle) {
     int y;
 
     /*Check if player is along the right diagnol line towards vertex */
@@ -232,8 +228,7 @@ bool player_triangle_collison_helper( Player* player , Triangle * triangle) {
         return true;
     }
 
-    /*Check if player is bottom edge of the player collides wtiht the top vertex of the triangle*/
-
+    /*Check if player is bottom edge of the player collides with  the top vertex of the triangle*/
     if( player->bot_left.y_pos == triangle->top.y_pos &&
         player->bot_right.x_pos >= triangle->top.x_pos &&
         player->bot_left.x_pos <= triangle->top.x_pos) {
@@ -244,3 +239,4 @@ bool player_triangle_collison_helper( Player* player , Triangle * triangle) {
     return false;
 
 }
+
