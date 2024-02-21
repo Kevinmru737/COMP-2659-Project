@@ -18,7 +18,8 @@ void render(const Model* model, UINT32* base, bool *was_ground_drawn) {
 	
 	
 	clear_except_ground(base);
-	
+
+    draw_32_bit_bitmap(base, 0, 0, 271, 640, background_img);
     render_all_active_platforms(model, base);
     render_all_active_triangles(model, base);
 	render_all_active_players(model, base);
