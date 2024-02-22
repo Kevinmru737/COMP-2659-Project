@@ -1,7 +1,6 @@
 /*Author: Kevin and Depanshu*/
 
 #include "events.h"
-#include "stdio.h"
 
 #define INITIAL_JUMP_VELOCITY 30
 
