@@ -1,7 +1,4 @@
 #include "models.h"
-#include "stdio.h"
-#include <stdlib.h>
-#include <osbind.h>
 
  /* Author: Depanshu and Kevin
 
