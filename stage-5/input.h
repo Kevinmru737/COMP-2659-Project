@@ -1,0 +1,13 @@
+#ifndef INPUT_H
+#define INPUT_H
+
+
+
+#include <osbind.h>
+
+#include "bool.h"
+
+/*changes the inp value if a valid key (esc or space) was pressed*/
+void user_input(char *inp);
+
+#endif
