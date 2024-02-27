@@ -1,0 +1,16 @@
+main: main.o raster.o bitmap.o
+	cc68x -g main.o raster.o bitmap.o -o main
+
+
+main.o: main.c
+	cc68x -g -c main.c
+
+raster.o: raster.c raster.h 
+	cc68x -g -c raster.c
+
+bitmap.o: bitmap.c bitmap.h
+	cc68x -g -c bitmap.c
+
+
+
+
