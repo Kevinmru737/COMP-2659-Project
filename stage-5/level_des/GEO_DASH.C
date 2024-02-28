@@ -42,7 +42,7 @@ int main() {
 		time_level_elapsed = time_now - time_level_then;
 
 		/*checks for obstacle generation every second*/
-		if ((time_level_elapsed % 70) == 0) {
+		if (time_level_elapsed > 35) {
 			time_in_sec++;
 			if ((level1[generate_instance].time == time_in_sec)) {
 				
@@ -59,6 +59,7 @@ int main() {
 				generate_instance++;	
 
 			}
+			time_level_then = time_now;
 		}
 
 		if (time_elapsed > 1) {
@@ -128,7 +129,7 @@ void intit_starting_model(Model* model) {
 	
 	initialize_ground( 271, &( model->ground ) );
 	
-	initialize_player( 45, 271 - 31, &( model->player[0] ) );
+	initialize_player( 150, 271 - 31, &( model->player[0] ) );
 	
 }
 
