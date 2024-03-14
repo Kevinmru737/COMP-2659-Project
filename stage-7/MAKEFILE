@@ -1,0 +1,15 @@
+
+tst_psg: tst_psg.o psg.o input.o t_driver.o
+	cc68x -g tst_psg.o psg.o input.o t_driver.o -o tst_psg
+
+tst_psg.o: tst_psg.c
+	cc68x -g -c tst_psg.c
+
+t_driver.o: t_driver.c t_driver.h
+	cc68x -g -c t_driver.c
+
+psg.o: psg.c psg.h
+	cc68x -g -c psg.c
+
+input.o: input.c input.h
+	cc68x -g -c input.c

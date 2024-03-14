@@ -15,6 +15,8 @@ typedef unsigned long UINT32;
 #define UINT8_PER_SCANLINE 80
 
 
+
+
                                 /* (x % 32) + (y *20) */
 #define OFFSET_TO_UINT32(X,Y) (X >> 5) + (Y << 4) + (Y << 2) 
 #define OFFSET_TO_UINT16(X,Y) (X >> 4) + (Y << 5) + (Y << 3)
