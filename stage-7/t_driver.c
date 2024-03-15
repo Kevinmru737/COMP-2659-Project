@@ -23,8 +23,6 @@ typedef enum {
     TEST_WRITE_DONE
 } TEST_CASES_WRITE_PSG;
 
-
-
 UINT8 test_values [] = {
     0xCD, 0xA, 0x34, 0x1, 0x78, 0x5,
     0x1A, 0x3E, 0x1F, 0x1A, 0x05, 0x4F,
@@ -84,19 +82,14 @@ bool test_driver_1() {
     char input = NO_INP_CHAR;
     TEST_CASES_WRITE_PSG test_counter = TEST_WRITE_PSG_1;
     printf("***Test Driver 1 simply tests setting tones and writing to all used \n\tregisters and reading them***\n\n");
-
-    printf("Press ESC to exit the test driver 1...\n\n");
-
+    printf("Press ESC to exit test driver 1...\n\n");
     printf("Press Spacebar to execute the next test...\n");
-
     printf("Setting tones to Channels A, B and C (Fine and Course)...\n\n");
     
     while (input != ESC_KEY) {
         user_input(&input);
-
-
         if(input == ESC_KEY) {
-            printf("Returning to main program...\n\nPress ESC to Exit the main program\n\n");
+            printf("Returning to main program...\n\n");
             return TRUE;
         }
 
@@ -111,12 +104,8 @@ bool test_driver_1() {
                     test_values[test_counter], test_counter, channel_strings[test_counter]);
             }
 
-            
-
-            
             switch (test_counter) {
                 case TEST_WRITE_PSG_1:
-                    
                     set_tone(CHANNEL_A, 0xACD);
                     test_counter++;
                     break;
@@ -176,13 +165,12 @@ bool test_driver_1() {
                     set_volume(CHANNEL_A, 0x00);
                     set_volume(CHANNEL_B, 0x00);
                     write_psg(channel_names[test_counter], test_values[test_counter]);
-                    test_counter = TEST_WRITE_DONE;
+                    test_counter++;
                     break;
 
-                case TEST_WRITE_DONE:
+                case TEST_WRITE_PSG_15:
                     printf("Done with Test Driver 1...\n\n");
                     return TRUE;
-
             }
             if (expected_values[test_counter - 1] == read_psg(channel_names[test_counter - 1])){
                 printf("Register value is %u vs expected %u: *** PASSED *** \n\n",
@@ -191,16 +179,8 @@ bool test_driver_1() {
                 printf("Register value is %u vs expected %u: *** FAILED *** \n\n",
                         read_psg(channel_names[test_counter - 1]), expected_values[test_counter - 1]);
             }
-
-
-
-            
-            
         }
     }
-    
-
-
 }
 /*
 * Purpose: test_driver_2 tests set_volume, enable_channel and stop_sound from PSG.c
@@ -213,23 +193,21 @@ bool test_driver_1() {
 bool test_driver_2() {
     int i = 0;
     char input = NO_INP_CHAR;
-    TEST_CASES_WRITE_PSG test_counter = TEST_WRITE_PSG_14;
+    TEST_CASES_WRITE_PSG test_counter = TEST_WRITE_PSG_1;
     printf("***Test Driver 2 tests setting volumes and enabling channels (Turn Sound On) ***\n\n");
-
-    printf("Press ESC to exit the test driver 2...\n\n");
-
+    printf("Press ESC to exit test driver 2...\n\n");
     printf("Press Spacebar to execute the next test...\n");
 
-    while (test_counter != TEST_WRITE_DONE && input != ESC_KEY) {
+    while (input != ESC_KEY) {
         user_input(&input);
 
         if(input == ESC_KEY) {
-            printf("Returning to main program...\n\nPress ESC to Exit the main program\n\n");
+            printf("Returning to main program...\n\n");
+            printf("Press Spacebar to begin playing the Game Music...\n\n");
+            printf ("Press ESC to Exit the main program\n\n");
             return TRUE;
         }
-
         if(input == ' ') {
-            
             input = NO_INP_CHAR;
 
             switch (test_counter) {
@@ -285,22 +263,22 @@ bool test_driver_2() {
                     break;
  
                 case TEST_WRITE_PSG_7:
-                    printf("Channel A Tone: G3\n");
-                    printf("Channel B Tone: D3_SHARP\n");
-                    printf("Channel C Tone: F3\n");
+                    printf("Channel A Tone: G1\n");
+                    printf("Channel B Tone: D1_SHARP\n");
+                    printf("Channel C Tone: F1\n");
                     printf("Volume = 12\n");
                     printf("Enabling Channels...\n\n");
                     printf("Press Spacebar to stop sound\n\n");
 
-                    set_tone(CHANNEL_A, G3);
+                    set_tone(CHANNEL_A, G1);
                     set_volume(CHANNEL_A, 12);
                     enable_channel(CHANNEL_A, TONE_ON, NOISE_OFF);
 
-                    set_tone(CHANNEL_B, D3_SHARP);
+                    set_tone(CHANNEL_B, D1_SHARP);
                     set_volume(CHANNEL_B, 12);
                     enable_channel(CHANNEL_B, TONE_ON, NOISE_OFF);
 
-                    set_tone(CHANNEL_C, F3);
+                    set_tone(CHANNEL_C, F1);
                     set_volume(CHANNEL_C, 12);
                     enable_channel(CHANNEL_C, TONE_ON, NOISE_OFF);
                     test_counter++;
@@ -313,13 +291,13 @@ bool test_driver_2() {
                     break;
 
                 case TEST_WRITE_PSG_9:
-                    printf("Channel A Tone: G3\n");
+                    printf("Channel A Tone: G1\n");
                     printf("Volume = 12\n");
                     printf("Envelope Frequency: 0x90\n");
                     printf("Envelope Shape : 0x08\n");
                     printf("Enabling Channel...\n\n");
                     printf("Press Spacebar to stop sound\n\n");
-                    set_tone(CHANNEL_A, G3);
+                    set_tone(CHANNEL_A, G1);
                     set_volume(CHANNEL_B, 0x1C); /* enabling envelope */
                     set_envelope (0x90, 0x08);
                     enable_channel(CHANNEL_A, TONE_ON, NOISE_OFF);
@@ -337,7 +315,7 @@ bool test_driver_2() {
                     printf("Tone is off for A, B and C, and only Noise is on for all 3 channels\n");
                     printf("Enabling Channel A, B and C...\n\n");
                     printf("Press Spacebar to stop sound\n\n");
-                    write_psg(NOISE_FREQ, 0x1F);
+                    set_noise(0x1F);
                     set_volume(CHANNEL_A, 0x10);
                     set_volume(CHANNEL_B, 0x10);
                     set_volume(CHANNEL_C, 0x10); /* enabling envelope */
@@ -359,10 +337,10 @@ bool test_driver_2() {
                     printf("Tone is G3, G1 and G1 for A, B and C\nNoise is on for all 3 channels\n");
                     printf("Enabling Channel A, B and C...\n\n");
                     printf("Press Spacebar to stop sound\n\n");
-                    set_tone(CHANNEL_A, G3);
+                    set_tone(CHANNEL_A, G1);
                     set_tone(CHANNEL_B, G1);
                     set_tone(CHANNEL_C, G1);
-                    write_psg(NOISE_FREQ, 0x0F);
+                    set_noise(0x0F);
                     set_volume(CHANNEL_A, 0x10);
                     set_volume(CHANNEL_B, 0x10);
                     set_volume(CHANNEL_C, 0x10); /* enabling envelope */
@@ -387,56 +365,19 @@ bool test_driver_2() {
                     printf("Press Spacebar to stop sound\n\n");
                     
                     set_tone(CHANNEL_A, G1);
-                    write_psg(NOISE_FREQ, 0x07);
+                    set_noise(0x07);
                     enable_channel(CHANNEL_A, TONE_ON, NOISE_OFF);
                     set_envelope(0x1000, 3);
                     set_volume(CHANNEL_A, 0x10);
                     test_counter++;
                     break;
                 case TEST_WRITE_PSG_16:
-                    printf("Press Spacebar to continue...\n\n");
+                    printf("Returning to main program...\n\n");
+                    printf("Press Spacebar to begin playing the Game Music...\n\n");
                     stop_sound();
                     test_counter++;
-                    break;
-
-                case TEST_WRITE_PSG_17:
-                    printf("Setting the tone as 'G3' into Channel A...\n");
-                    printf("Volume = 12\n");
-                    printf("Noise Frequency:\n");
-                    printf("Envelope:\n");
-                    printf("Enabling Channel...\n\n");
-                    printf("Press Spacebar to stop sound\n\n");
-                    
-                    set_tone(CHANNEL_A, G1);
-                    write_psg(NOISE_FREQ, 0x03);
-                    enable_channel(CHANNEL_A, TONE_ON, NOISE_OFF);
-                    set_envelope(0xCC, 0xE);
-                    set_volume(CHANNEL_A, 0x10);
-                    test_counter++;
-                    break;
-                case TEST_WRITE_PSG_18  :
-                    printf("Press Spacebar to continue...\n\n");
-                    stop_sound();
-                    test_counter++;
-                    break;
-
-                case TEST_WRITE_DONE:
-                    stop_sound();
-                    printf("Returning to main program...\n\nPress ESC to Exit the main program\n\n");
                     return TRUE;
-                    break;
-
-
             }
-
-
-            
-            
         }
     }
-    
-
-
-
-    return TRUE;
 }
