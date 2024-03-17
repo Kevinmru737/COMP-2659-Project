@@ -43,8 +43,7 @@ fill:		movem.l		d1-7/a1-6,-(a0)
 
 ;----------------- SUBROUTINE: UINT32 *get_video_base(); ----------------
 ; PURPOSE:  Returns the address stored at the video base register
-;
-;Reference:
+; NOte: RETURNS the address in d0 as this compiler(run time) does not return on the stack
 ;-------------------------------------------------------------------------------
 
 
@@ -83,9 +82,7 @@ _get_video_base:
 ;----------------- SUBROUTINE: void set_video_base(UINT32 *); ----------------
 ; PURPOSE:  Changes the address stored at the video base register to the address inputted
 ;-------------------------------------------------------------------------------
-; CALLER INUT: takes a pointer
-; 
-;-------------------------------------------------------------------------------
+
 NEW_VIDEO_BASE_OFFSET 	equ     	8
 
 _set_video_base:
