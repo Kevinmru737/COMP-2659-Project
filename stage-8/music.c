@@ -15,6 +15,8 @@ MUSIC_STATE music_state_tracker;
 *
 */
 void start_music() {
+    tracker_bass = 0;
+    tracker_melody = 0;
     music_state_tracker = MUSIC_STATE_1;
     melody_timing = melody_notes[tracker_melody].timing;
     bass_timing = EIGHTH_NOTE;

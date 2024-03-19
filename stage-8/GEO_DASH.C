@@ -36,7 +36,8 @@ int main() {
         user_input(&ch);
         user_quit = (ch == '\033');
     }
-
+    draw_8_bit_bitmap((UINT8*) current_buffer, 608, 0, 400, 32, 
+                   victory_wall);
     return 0;
 }
 

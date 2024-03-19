@@ -61,7 +61,11 @@ typedef unsigned char bool;
 #define OFFSET_48_UP_FROM_GROUND 223
 #define OFFSET_64_UP_FROM_GROUND 208
 #define OFFSET_71_UP_FROM_GROUND 200
+#define OFFSET_80_UP_FROM_GROUND 189
 #define OFFSET_90_UP_FROM_GROUND 179
+#define OFFSET_96_UP_FROM_GROUND 176
+#define OFFSET_112_UP_FROM_GROUND 160
+#define OFFSET_144_UP_FROM_GROUND 128
 /*Exclusively for geodash.c*/
 #define NO_INP_CHAR '\0'
 
