@@ -12,7 +12,7 @@ void draw_player(UINT32 *base,int y,const UINT32 *bitmap );
 
 
 
-/********************************Deprecated*************************************************/
+
 void draw_32_bit_bitmap(UINT32 *base, int x, int y, int height, int width, const UINT32 *bitmap);
 void draw_16_bit_bitmap(UINT16 *base, int x, int y, int height, int width, const UINT16 *bitmap);
 void draw_8_bit_bitmap(UINT8 *base, int x, int y, int height, int width, UINT8 *bitmap);
