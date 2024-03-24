@@ -1,0 +1,44 @@
+geo_dash: models.o events.o raster.o rast_asm.o ISRS_ASM.o ISRS.o input.o geo_dash.o bitmaps.o level.o effects.o music.o psg.o render.o
+	cc68x -g models.o events.o raster.o rast_asm.o ISRS_ASM.o render.o ISRS.c input.o geo_dash.o bitmaps.o level.o  effects.o music.o psg.o -o geo_dash
+
+geo_dash.o: geo_dash.c global.h
+	cc68x -g -c geo_dash.c global.h
+
+input.o: input.c input.h 
+	cc68x -g -c input.c
+	
+render.o: render.c render.h raster.h 
+	cc68x -g -c render.c
+
+models.o: models.c models.h 
+	cc68x -g -c models.c
+
+level.o: Level.c Level.h 
+	cc68x -g -c Level.c
+
+events.o: events.c events.h 
+	cc68x -g -c events.c
+	
+raster.o: raster.c raster.h 
+	cc68x -g -c raster.c
+
+bitmaps.o: bitmaps.c bitmaps.h 
+	cc68x -g -c bitmaps.c
+
+psg.o: psg.c psg.h
+	cc68x -g -c psg.c
+
+effects.o: effects.c effects.h
+	cc68x -g -c effects.c
+
+music.o: music.c music.h
+	cc68x -g -c music.c
+
+ISRS.o: ISRS.c ISRS.h
+	cc68x -g -c ISRS.c
+
+rast_asm.o: rast_asm.s
+	gen -D -L2 rast_asm.s
+
+ISRS_ASM.o: ISRS_ASM.s
+	gen -D -L2 ISRS_ASM.s
