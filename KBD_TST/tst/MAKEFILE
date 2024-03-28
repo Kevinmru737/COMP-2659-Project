@@ -1,0 +1,19 @@
+
+tst_kbd: tst_kbd.o vct_inst.o kbd_asm.o kbd.o
+	cc68x -g tst_kbd.o vct_inst.o kbd_asm.o kbd.o -o tst_kbd
+
+tst_kbd.o: tst_kbd.c 
+	cc68x -g -c tst_kbd.c
+
+vct_inst.o: vct_inst.c vct_inst.h
+	cc68x -g -c vct_inst.c
+
+kbd.o: kbd.c 
+	cc68x -g -c kbd.c
+
+
+
+kbd_asm.o: kbd_asm.s
+	gen -D -L2 kbd_asm.s
+
+
