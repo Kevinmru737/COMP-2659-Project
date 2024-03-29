@@ -15,6 +15,7 @@ MUSIC_STATE music_state_tracker;
 *
 */
 void start_music() {
+    stop_sound();
     tracker_bass = 0;
     tracker_melody = 0;
     music_state_tracker = MUSIC_STATE_1;
