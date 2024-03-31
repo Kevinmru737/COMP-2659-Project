@@ -8,8 +8,7 @@
 
 void draw_platform_triangle(UINT32 *base,int x,int y,const UINT32 *bitmap, bool is_short_platform );
 void draw_player(UINT32 *base,int y,const UINT32 *bitmap );
-
-
+void draw_cursor(UINT32 *base,int x,int y,const UINT32 *bitmap, UINT32* cursor_inverse);
 
 
 

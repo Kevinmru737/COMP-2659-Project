@@ -51,7 +51,7 @@ typedef unsigned char bool;
 #define PLATFORM_HEIGHT_SHORT 16
 #define PLAYER_INDEX 0
 
-#define MAX_GAME_STATE 11
+#define MAX_GAME_STATE 10
 
 /*Exclusively for levels.h*/
 #define PLAYER_START_X 160

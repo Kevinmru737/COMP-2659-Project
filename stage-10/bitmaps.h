@@ -18,6 +18,7 @@ extern const UINT32 platform_32_32 [];
 extern const UINT32 platform_32_16[];
 extern const UINT32 brick_32_32[];
 extern const UINT32 brick_32_32_2[];
+extern const UINT8 victory_wall [];
 extern const UINT32 *game_object_images[];
 
 
@@ -47,11 +48,12 @@ extern const UINT8 explosion_f8 [];
 
 extern const UINT8 *explosion_images [];
 
-extern const UINT8 splash_screen[];
+extern const UINT32 splash_screen[];
 
 
 
-
+extern const UINT32 cursor[];
+extern const UINT32 cursor_inverted[];
 
 
 #endif

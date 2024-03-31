@@ -5,64 +5,125 @@
 #include "models.h"
 #include "events.h"
 #include "render.h"
-#include "rast_asm.h"
 #include "macros.h"
 #include "level.h"
 #include "music.h"
 #include "effects.h"
+#include "rast_asm.h"
 #include "global.h"
 #include "vbl.h"
 #include "vct_inst.h"
 #include <osbind.h>
-#include "vic.h"
-
-#define FINAL_VICTORY_FRAME_COUNT   10
-#define MOUSE_LEFT_CLICK_VALUE      0xFA
-#define MOUSE_RIGHT_CLICK_VALUE      0xF9
 
 UINT8 allocated_buffer[32260];
-
-
-/*GLobals to sync with the VBL*/
 Model model;
 unsigned char game_state;
 bool fatal_collision;
-
-
-void final_victory_animation(UINT32* back_buffer, UINT32* front_buffer, UINT32* current_buffer);
+short render_request = 0;
+UINT32 get_time();
 void set_buffers(UINT32** back_buffer, UINT32** front_buffer, UINT8 back_buffer_array[]);
 void switch_buffers(UINT32** current_buffer, UINT32* front_buffer, UINT32 * back_buffer);
 void main_game_loop();
 void fatal_Collision_animation(UINT32* back_buffer, UINT32* front_buffer, UINT32* current_buffer, Model *model, short *num_times_ground_drawn);
-void delay_to_display_score();
-void paul_mode();
+void wait_for_1_second();
 
+
+const UINT32 cursor_2[]  = {
+    0x00000000, 
+	0x00000000, 
+	0x00000000, 
+	0x00000000, 
+	0x0f000000, 
+	0x0fe00000, 
+	0x0ffc0000, 
+	0x0fff0000, 
+	0x07ffe000, 
+	0x07fffc00, 
+	0x07ffff00, 
+	0x03ffffc0, 
+	0x03ffffe0, 
+	0x01ffffe0, 
+	0x01ffffc0, 
+	0x01ffff00, 
+	0x00fff800, 
+	0x00ffe000, 
+	0x00fff000, 
+	0x007fb800, 
+	0x007f9c00, 
+	0x003f0e00, 
+	0x003f0700, 
+	0x003f0380, 
+	0x001e01c0, 
+	0x001e00e0, 
+	0x000c0060, 
+	0x00000000, 
+	0x00000000, 
+	0x00000000, 
+	0x00000000, 
+	0x00000000 
+};
+void testing_mouse() {
+
+    UINT32 *back_buffer, *front_buffer, *current_buffer;
+    set_buffers(&back_buffer, &front_buffer, allocated_buffer);
+    
+    current_buffer = back_buffer;
+    draw_32_bit_bitmap(current_buffer, 0, 0,400, 640, splash_screen);
+    while (fatal_collision == FALSE ) {
+    
+        draw_cursor(current_buffer, mouse_curr_x_pos, mouse_curr_y_pos, cursor_2, cursor_inverted);
+        set_video_base(current_buffer);
+        switch_buffers(&current_buffer, front_buffer, back_buffer);
+        Vsync();
+
+    }
+ 
+
+   
+    
+    set_video_base(front_buffer);
+
+
+
+
+
+}
 
 int main() {
 
+
     UINT8 *current_buffer = (UINT8 *) get_video_base();
-    unsigned char user_input = 0;
-    Vector orig_vbl_vector;
+    unsigned char ch = NO_INP_CHAR;  /*value to indicate that a valid key was not pressed*/
 
-    render_splash_screen(current_buffer);
+    bool user_quit = FALSE;
+    
+
+ 
+   /* render_splash_screen(current_buffer);*/
     init_keyboard_isr();
-    orig_vbl_vector = install_vector(VBL_VECTOR_NUM, vbl_isr);
-    enable_mouse();
-
-    while(user_input != MOUSE_RIGHT_CLICK_VALUE) {
-        
-        if(user_input == MOUSE_LEFT_CLICK_VALUE) {
-            disable_mouse();
+    testing_mouse();
+    
+    /*
+    while(user_quit == FALSE) {
+        if(ch == ' ') {
             main_game_loop();
-            enable_mouse();
             render_splash_screen(current_buffer);
         }
-        user_input = get_mouse_button_status();
+
+
+
+        wait_for_1_second();
+
+
+        ch = NO_INP_CHAR;
+        user_input(&ch);
+        user_quit = (ch == '\033');
     }
-    
-    install_vector(VBL_VECTOR_NUM, orig_vbl_vector);
+*/
     restore_keyboard_isr();
-  
+    
+    
+    
     
     return 0;
 }
@@ -74,59 +135,58 @@ int main() {
 
 void main_game_loop() {
 
-    UINT32 *back_buffer, *front_buffer, *current_buffer;  
+    UINT32 *back_buffer, *front_buffer, *current_buffer;
+    bool user_quit;
     short num_times_ground_drawn = 0;
-    
-    set_buffers(&back_buffer, &front_buffer, allocated_buffer);
-    current_buffer = back_buffer;
-    enter_super();
-    start_music();
-    exit_super();
+    short player_num = PLAYER_INDEX;
+    unsigned char ch = NO_INP_CHAR;  /*value to indicate that a valid key was not pressed*/
+    Vector orig_vbl_vector = install_vector(VBL_VECTOR_NUM, main_gm_vbl_isr);
 
-    /*These need to be reset for every playthrough as they are global */
-    is_main_game_running = TRUE;
-    fatal_collision = FALSE;
     game_state = 0;
-    enable_keyboard();
+    user_quit = fatal_collision = FALSE;
 
+
+
+    set_buffers(&back_buffer, &front_buffer, allocated_buffer);
+/*    start_music();
+*/
+
+    current_buffer = back_buffer;
     while (fatal_collision == FALSE && game_state < MAX_GAME_STATE) {
-        
-        if(user_pressed_space() == TRUE) {
+        if(ch == ' ') {
             jump_request(&model, 0);
         }
 
         if (render_request == 1) {
             render(&model, current_buffer, &num_times_ground_drawn);
             set_video_base(current_buffer);
+
             switch_buffers(&current_buffer, front_buffer, back_buffer);
             render_request = 0;
+
        }
+        ch = NO_INP_CHAR;
+        user_input(&ch);
 
     }
- 
-    is_main_game_running = FALSE;
-    disable_keyboard();
+    install_vector(VBL_VECTOR_NUM, orig_vbl_vector);
 
     if(fatal_collision == TRUE) {
-        
-        enter_super();
-        play_explosion_sound();
-        exit_super();
+  /*      play_explosion_sound();*/
         fatal_Collision_animation(back_buffer, front_buffer,current_buffer, &model, &num_times_ground_drawn);
-        render_score(current_buffer, game_state -1 );
-        set_video_base(current_buffer);
-        delay_to_display_score();
-
-    } else {
-        final_victory_animation(back_buffer, front_buffer, current_buffer);
     }
-  
 
-    enter_super();
-    stop_sound();
-    exit_super();
-    
+    /*stop_sound();*/
+    render_score(current_buffer, game_state -1 );
+    set_video_base(current_buffer);
+
+    wait_for_1_second();
+
     set_video_base(front_buffer);
+
+    game_state = 0;
+    fatal_collision = FALSE;
+
 
 
 }
@@ -137,6 +197,37 @@ void main_game_loop() {
 
 
 
+
+
+
+
+
+
+
+
+
+/*********************************************************
+ * Author: Paul Pospisil
+ * Purpose: Retrieves the current time from a cpu clock. This function accesses
+ * 			a timer in the memory that increments 70 times per second and returns the current
+ * 			value of this timer.
+ *
+ * Input: None.
+ * Output: Returns the current time as a UINT32 value.
+ *
+ *********************************************************/
+UINT32 get_time(){
+	UINT32 time_now;
+	UINT32 old_ssp;
+	UINT32 *timer = (UINT32 *)0x462; /*address of a long word that is auto incremented 70 times per second */
+	
+	old_ssp = Super(0); /* enter privileged mode */
+	time_now = *timer;
+	Super(old_ssp); /* exit privileged mode */
+	
+	return time_now;
+	
+}
 
 
 
@@ -176,9 +267,9 @@ void set_buffers(UINT32** back_buffer, UINT32** front_buffer, UINT8 back_buffer_
 void fatal_Collision_animation(UINT32* back_buffer, UINT32* front_buffer, UINT32* current_buffer, Model *model, short *num_times_ground_drawn){
   
     short explosion_counter = 0;
+    Vector orig_vbl_vector = install_vector(VBL_VECTOR_NUM, fatal_animation_vbl_isr);
 
 
-    event_animation_running = TRUE;
     while(explosion_counter < EXPLOSION_ANIMATION_TOTAL_FRAMES) {
 
 	    if(render_request == 1) {
@@ -192,8 +283,8 @@ void fatal_Collision_animation(UINT32* back_buffer, UINT32* front_buffer, UINT32
 	    }
 
     }
-
-    event_animation_running = FALSE;
+    
+    install_vector( VBL_VECTOR_NUM, orig_vbl_vector);
 
 
 }
@@ -219,109 +310,11 @@ void switch_buffers(UINT32** current_buffer, UINT32* front_buffer, UINT32 * back
 }
 
 /*********************************************************
- * Purpose: Pauses the program execution so that the score can be display for a brief time
+ * Purpose: Pauses the program execution for 1 second *
  *********************************************************/
-void delay_to_display_score() {
-    unsigned long i = 0;
-    while (i++ < 1000000);
+void wait_for_1_second() {
+    UINT32 start_time = get_time();
+
+    while (get_time() - start_time < 70) {}
 
 }
-
-
-
-
-
-
-
-/* Similar to the main game loop, but with collisions tunred off
-*/
-void paul_mode() {
-
-    UINT32 *back_buffer, *front_buffer, *current_buffer;
-    short num_times_ground_drawn = 0;
-    
-    set_buffers(&back_buffer, &front_buffer, allocated_buffer);
-    enter_super();
-    start_music();
-    exit_super();
-
-    current_buffer = back_buffer;
-    is_main_game_running = TRUE;    
-    game_state = 0;
-    enable_keyboard();
-    
-    while (game_state < MAX_GAME_STATE) {
-        if(user_pressed_space() == TRUE) {
-            jump_request(&model, 0);
-        }
-
-        if (render_request == 1) {
-            render(&model, current_buffer, &num_times_ground_drawn);
-            set_video_base(current_buffer);
-            switch_buffers(&current_buffer, front_buffer, back_buffer);
-            render_request = 0;
-       }
-    
-    }
-
-    is_main_game_running = FALSE;
-    disable_keyboard();
-    enter_super();
-    stop_sound();
-    exit_super();
-
-    final_victory_animation(back_buffer, front_buffer, current_buffer);
-
-    set_video_base(front_buffer);
-
-
-}
-
-
-
-
-
-
-void final_victory_animation(UINT32* back_buffer, UINT32* front_buffer, UINT32* current_buffer){
-    short animation_frame_counter;
-    short animation_loop_count = 0;
-
-
-    event_animation_running = TRUE;
-    while (animation_loop_count < 10) {     
-        animation_frame_counter = 0;
-        while(animation_frame_counter < FINAL_VICTORY_FRAME_COUNT) {
-
-	        if(render_request == 1) {
-                draw_8_bit_bitmap((UINT8 *)current_buffer, 0 ,0, 400, 640, victory_animation_frames[animation_frame_counter]);
-                set_video_base(current_buffer);
-                switch_buffers(&current_buffer, front_buffer, back_buffer);
-
-    		    animation_frame_counter++;
-                render_request = 0;
-	        }
-   
-        }
-        animation_loop_count++;
-
-    }
-    event_animation_running = FALSE;
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

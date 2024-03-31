@@ -4,7 +4,6 @@
 #include "PSG.h"
 #include "macros.h"
 
-
 /*
 * music.h contains 2 functions, start_music and update_music
 *

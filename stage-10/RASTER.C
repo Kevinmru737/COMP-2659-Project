@@ -70,9 +70,40 @@ void draw_platform_triangle(UINT32 *base,int x,int y,const UINT32 *bitmap, bool 
 	
  } 
 	
+/*Purpose: Draws the cursor with the specified bitmap and location. Assumes that the cursor is 32 x 32*/
+void draw_cursor(UINT32 *base,int x,int y,const UINT32 *bitmap, UINT32* cursor_inverse)
+{
+	int row = 0;
+    int height  = DEFAULT_OBJECT_HEIGHT;
+    int start_bit_position = x & 31; /*which bit to start drawning on*/
+    UINT32 first_long_mask = 0xffffffff, second_long_mask  = 0xffffffff;
+
+    /*how many bits were draw on the first long */
+    int bits_in_first_long = UINT32_SIZE_BITS - start_bit_position;
+	first_long_mask = first_long_mask << (32 -start_bit_position);
+    second_long_mask = second_long_mask >> start_bit_position;
+
+    base += OFFSET_TO_UINT32(x,y); /*which long to start drawing on*/
+
+	for(row;row < height; row++) {
+        if(start_bit_position == 0) {
+            *base &= ~(*bitmap);
+            *base |= (*bitmap);
+		    base += UINT32_PER_SCANLINE;
+        } else {
+            *base &= (~(*bitmap) >> start_bit_position) | first_long_mask;
+            *base |= (*bitmap) >> start_bit_position;
+            base++;
+            *base &= (~(*bitmap)  << bits_in_first_long) | second_long_mask;
+            *base |= (*bitmap) << bits_in_first_long;
+		    base += UINT32_PER_SCANLINE - 1;
+        }
+        bitmap++;
+            
+    }	
 	
 	
-	
+ } 
 	
 	
 

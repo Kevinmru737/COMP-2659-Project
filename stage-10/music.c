@@ -15,8 +15,6 @@ MUSIC_STATE music_state_tracker;
 *
 */
 void start_music() {
- 
-    stop_sound();
     tracker_bass = 0;
     tracker_melody = 0;
     music_state_tracker = MUSIC_STATE_1;
@@ -32,7 +30,6 @@ void start_music() {
     set_volume(CHANNEL_C, 0xA);
     tracker_bass++;
     tracker_melody++;
-
 }
 
 /*
@@ -51,22 +48,22 @@ void start_music() {
 * Limitations: Must be called from main.
 */
 void update_music(UINT32 *time_elapsed_melody, UINT32 *time_elapsed_bass) {
-
+    
     if (*(time_elapsed_melody) > melody_timing) {
             melody_timing = melody_notes[tracker_melody].timing;
 
             if (melody_notes[tracker_melody].note != NOTE_PAUSE) {
-               set_tone(CHANNEL_B, melody_notes[tracker_melody].note);
+                set_tone(CHANNEL_B, melody_notes[tracker_melody].note);
                 enable_channel(CHANNEL_B, TONE_ON, NOISE_OFF);
             } else {
-               enable_channel(CHANNEL_B, TONE_OFF, NOISE_OFF);
+                enable_channel(CHANNEL_B, TONE_OFF, NOISE_OFF);
             }
             if (music_state_tracker >= MUSIC_STATE_3) {
                 if (melody_notes2[tracker_melody].note != NOTE_PAUSE) {
-                   set_tone(CHANNEL_C, melody_notes2[tracker_melody].note);
+                    set_tone(CHANNEL_C, melody_notes2[tracker_melody].note);
                     enable_channel(CHANNEL_C, TONE_ON, NOISE_OFF);
                 } else {
-                   enable_channel(CHANNEL_C, TONE_OFF, NOISE_OFF);
+                    enable_channel(CHANNEL_C, TONE_OFF, NOISE_OFF);
                 }
             }
             tracker_melody++;
@@ -92,5 +89,4 @@ void update_music(UINT32 *time_elapsed_melody, UINT32 *time_elapsed_bass) {
             tracker_bass++;
             *time_elapsed_bass = 0;
         }
-
-     }
+}

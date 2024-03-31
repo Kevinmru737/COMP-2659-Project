@@ -110,7 +110,7 @@ void initialize_ground(Ground* ptr_ground) {
 bool player_fatal_collision(Model *model, short player_num) {
     Game_Object * player = &(model->game_objects[player_num]);
 	Game_Object *object;
-    short i= 0  + 1;
+    short i= 1;
 
     for(i; i< model->num_active_objects; i++) {
 		object = &(model->game_objects[i]);

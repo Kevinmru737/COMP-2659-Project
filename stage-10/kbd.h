@@ -1,14 +1,8 @@
 #ifndef kbd_h
 #define kbd_h
-
-
 #include "vct_inst.h"
 #include <osbind.h>
-#include "global.h"
 #include "macros.h"
-#include "rast_asm.h"
-
-
 
 #define KBD_BUFFER_SIZE 256
 
@@ -29,7 +23,7 @@
 #define LEFT_SHIFT_BREAK_CODE 0xAA
 #define Right_SHIFT_BREAK_CODE 0xB6
 
-#define IS_A_SHIFT_BREAK_CODES(X) ((X == Right_SHIFT_BREAK_CODE) || (X == LEFT_SHIFT_BREAK_CODE))
+#define SHIFT_BREAK_CODES(X) ((X == Right_SHIFT_BREAK_CODE) || (X == LEFT_SHIFT_BREAK_CODE))
 
 
 
@@ -43,35 +37,23 @@ void kbd_driver();
 void kbd_isr();
 void put_value_in_buffer(unsigned char value);
 
-
-void enable_mouse();
-void enable_keyboard();
-void disable_mouse();
-void disable_keyboard();
-
-
-
-
 /* SIMILAR TO CCONIS AND CNECIN */
 
 unsigned char get_value_from_buffer();
 bool is_buffer_empty();
 
 typedef struct {
-   unsigned char front;
-   unsigned char rear;
+   unsigned front;
+   unsigned rear;
    unsigned char buffer[KBD_BUFFER_SIZE];
  
 }Kbd_Buffer;
 
 
+extern int mouse_curr_x_pos;
+extern int mouse_curr_y_pos;
 
-extern bool mouse_enabled;
-extern bool keyboard_enabled;
-extern unsigned short mouse_button;
-extern int mouse_curr_x;
-extern int mouse_curr_y;
-extern int mouse_prev_y;
-extern int mouse_prev_x;
+extern int mouse_prev_x_pos;
+extern int mouse_prev_y_pos;
 
 #endif

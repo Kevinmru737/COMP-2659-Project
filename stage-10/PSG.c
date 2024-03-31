@@ -16,9 +16,12 @@
 void write_psg(UINT8 reg, UINT8 val){
     volatile UINT8 *PSG_reg_select = PSG_REG_SELECT_ADDRESS;
     volatile UINT8 *PSG_reg_write  = PSG_REG_WRITE_ADDRESS;
+    UINT32 old_ssp;
     if(reg >= 0 && reg <=15) {
+        old_ssp = Super(0); /* enter privileged mode */
         *PSG_reg_select = reg;
         *PSG_reg_write = val;
+        Super(old_ssp); /* exit privileged mode */
     }
 
 }
@@ -37,12 +40,12 @@ void write_psg(UINT8 reg, UINT8 val){
 UINT8 read_psg(UINT8 reg){
     volatile UINT8 *PSG_reg_select = PSG_REG_SELECT_ADDRESS;
     UINT8 PSG_value;
-
+    UINT32 old_ssp = Super(0);
     if (reg >= 0 && reg <= 15) {
         *PSG_reg_select = reg;
         PSG_value = *PSG_reg_select;        
     }
-
+    Super(old_ssp);
 
     return PSG_value;
 }

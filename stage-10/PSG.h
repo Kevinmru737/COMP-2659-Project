@@ -1,7 +1,7 @@
 #ifndef PSG_H
 #define PSG_H
 #include "macros.h"
-
+#include <osbind.h>
 /*
 * PSG.h is a library of functions designed to write and read to the
 * Atari's PSG.

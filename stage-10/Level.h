@@ -17,7 +17,6 @@ void lvl_7(Model *model, UINT8 *game_state);
 void lvl_8(Model*model, UINT8 *game_state);
 void lvl_9(Model*model, UINT8 *game_state);
 void lvl_10(Model*model, UINT8 *game_state);
-void lvl_11(Model*model, UINT8 *game_state);
 
 
 extern LEVEL_UPDATE_FUNCTIONS lvl_update_functions[];

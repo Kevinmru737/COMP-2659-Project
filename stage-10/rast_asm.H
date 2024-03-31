@@ -11,13 +11,12 @@
 #include "macros.h" 
 
 void clear_screen(UINT32* base);
-void clear_except_ground(UINT32* base);
+void clear_except_ground(UINT32* base);     
 
 void set_video_base(UINT32 *);
-UINT32* get_video_base();
 
-void enter_super();
-void exit_super();
+
+UINT32* get_video_base();
 
 
 

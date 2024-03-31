@@ -4,8 +4,6 @@
 	xdef		_clear_except_ground
 	xdef		_set_video_base
 	xdef		_get_video_base
-	xdef 		_enter_super
-	xdef 		_exit_super
 
 
 video_reg_address  equ		$FFFF8201
@@ -101,7 +99,7 @@ _set_video_base:
 
 
 ;----------------- SUBROUTINE: void enter_super(); ----------------
-; PURPOSE:  lets user enter supervisor mode. From one of the labs
+; PURPOSE:  lets user enter supervisor mode
 ;-------------------------------------------------------------------------------
 
 _enter_super:
@@ -121,7 +119,7 @@ _enter_super:
 
 
 ;----------------- SUBROUTINE: void exit_super(); ----------------
-; PURPOSE:  lets user exit supervisor mode. From one of the labs
+; PURPOSE:  lets user exit supervisor mode
 ;-------------------------------------------------------------------------------
 
 _exit_super:

@@ -5,11 +5,11 @@
 
 
 #include "models.h"
-#include "macros.h"
 #define VBL_VECTOR_NUM 28
 extern Model model;
 extern unsigned char game_state;
-extern bool fatal_collision;
+extern unsigned char fatal_collision;
+extern short render_request;
 
 
 #endif

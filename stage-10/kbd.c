@@ -3,17 +3,19 @@
 Kbd_Buffer kbd_buffer;
 Vector orig_kbd_vector;
 
+short mouse_state = NO_MOUSE_STATE;
 
-short mouse_state;
-bool mouse_enabled;
-bool keyboard_enabled;
-unsigned short mouse_button;
-int mouse_curr_x, mouse_curr_y, mouse_prev_y, mouse_prev_x;
+int mouse_curr_x_pos = 320;
+int mouse_curr_y_pos = 200;
 
+int mouse_prev_x_pos = 320;
+int mouse_prev_y_pos = 200;
+
+volatile unsigned char *const IKBD_control  = 0xFFFFFC00;
+volatile const unsigned char  *const IKBD_status  = 0xFFFFFC00;
 volatile const unsigned char *const IKBD_RDR  = 0xFFFFFC02;
-volatile unsigned char *const INTERUPT_ENABLE	= 0xFFFFFA09;
-#define NULL_CHAR '\0'
 
+#define NULL '\0'
 typedef enum {
     No_Special_Key,
     Caps_Lock_On,
@@ -23,7 +25,7 @@ typedef enum {
 
 KEY_STATE key_state = No_Special_Key;
 
-/*KEY tables, scancodes are used as indeces. Each element is an asci value*/
+
 unsigned char caps_lock[] = {
 0x0, 0x1b, 0x31, 0x32,
 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30, 
@@ -72,90 +74,48 @@ unsigned char unshifted[] = {
 };
 
 
-/*
-* PUrpose: INitializes the keyboard isr. Must be called in the begining of the program
-*/
 void init_keyboard_isr() {
     kbd_buffer.rear = 0;
     kbd_buffer.front = 0;
-
-    mouse_state = NO_MOUSE_STATE;
-    keyboard_enabled = mouse_enabled = FALSE;
-    mouse_button = 0;
-    mouse_curr_x = mouse_prev_x = 320;
-    mouse_curr_y = mouse_curr_y = 200;
-    
-    enter_super();
-    *INTERUPT_ENABLE &= 0xBF; /*masking interupts*/
-    exit_super();
-    
     orig_kbd_vector = install_vector(KBD_VEC_NUM, kbd_isr);
 
-    enter_super();
-    *INTERUPT_ENABLE |= 0x40; /*unmasking interupts*/
-    exit_super();
 }
 
-/*
-* Purpose: Restores the keyboard isr. Must be called at the end of the program
-*/
 void restore_keyboard_isr() {
-    enter_super();
-    *INTERUPT_ENABLE &= 0xBF; /*masking interupts*/
-    exit_super();
-
     install_vector(KBD_VEC_NUM, orig_kbd_vector);
-
-    enter_super();
-    *INTERUPT_ENABLE |= 0x40; /*unmasking interupts*/
-    exit_super();
 }
 
 
+                                                                                                                                      
+
 /*
- * Purpose: Main keyboard and mouse input driver. This function handles input from both the keyboard and the mouse. 
- *          ONly updates mouse or keyboard if they are enabled.
+ * Purpose: Main keyboard driver. Handles mouse as well as keyboard input
  */
 void kbd_driver() {
-    unsigned char value = *IKBD_RDR;
-    switch (mouse_state) {
+    unsigned char value = *IKBD_RDR; 
 
+    switch (mouse_state) {
         case NO_MOUSE_STATE:
-            
             if (value >= 0xF8) {
-               if(mouse_enabled == TRUE) {
-                    mouse_button = value; 
-                }
                 mouse_state = MOUSE_2nd_PACKET_STATE;
-            } else if(keyboard_enabled == TRUE) {
+            } else {
                 kbd_buffer.buffer[kbd_buffer.rear++] = value;
             }
             break;
 
         case MOUSE_2nd_PACKET_STATE:
-
-            if(mouse_enabled == TRUE) {
-                mouse_prev_x = mouse_curr_x; 
-                mouse_curr_x += (int)(char) value; 
-                if(mouse_curr_x > 608) mouse_curr_x = 608;
-                if(mouse_curr_x < 0) mouse_curr_x = 0;
-            }
-
+            mouse_prev_x_pos = mouse_curr_x_pos;
+            mouse_curr_x_pos += (char) value;
             mouse_state = MOUSE_3rd_PACKET_STATE;
             break;
 
         case MOUSE_3rd_PACKET_STATE:
-
-            if(mouse_enabled == TRUE) {   
-                mouse_prev_y = mouse_curr_y; 
-                mouse_curr_y += (int)(char) value; 
-                if(mouse_curr_y > 368) mouse_curr_y = 368;
-                if(mouse_curr_y < 0) mouse_curr_y = 0;           
-            }
-
+            mouse_prev_y_pos = mouse_curr_y_pos;
+            mouse_curr_y_pos += (char) value;
             mouse_state = NO_MOUSE_STATE;
             break;
     }
+
 }
 
 
@@ -171,20 +131,18 @@ bool is_buffer_empty() {
 
 
 
-
 /*
  * Purpose:  Gets the next character from the keyboard buffer. Converts the scancode into ascii using KEy tables and also
- *          takes into account shift(left and right) and caps lock key. Non-character and special break codes (excluding shifts)
- *          return a null character */
+ *          takes into account shift(left and right) and caps lock key. Retruns null if a break or special key is in the buffer
+ */
 unsigned char get_value_from_buffer() {
-    unsigned char value = NULL_CHAR; 
+    unsigned char value = NULL; 
 
-    while (is_buffer_empty() == FALSE && value == NULL_CHAR) {
+    while (is_buffer_empty() == FALSE && value == NULL) {
         value = kbd_buffer.buffer[kbd_buffer.front++];
 
-        /*skip if it is a non shift break scan code*/
-        if((value & BREAK_CODE) == BREAK_CODE && IS_A_SHIFT_BREAK_CODES(value) == FALSE)  {
-            value = NULL_CHAR; 
+        if (!((value & BREAK_CODE) == 0 || SHIFT_BREAK_CODES(value))) {
+            value = NULL; 
             continue; 
         }
 
@@ -196,57 +154,61 @@ unsigned char get_value_from_buffer() {
                 handle_caps_lock_on(&value); 
                 break;
             default: 
-                handle_shift_held(&value); 
+            handle_shift_held(&value); 
                 break;
         }
-
+        break;
     }
 
     return value;
 }
+
 /*
- * Purpose: Adjusts key_state if special keys (Caps Lock, Shift) were detected or translates scancodes 
- *          to unshifted asci characters. Special keys set the output to NULL_CHAR, indicating non-printable input
+ * Purpose: Processes the input character when no special keys (Caps Lock, Shift) are active.
  */
 void handle_no_special_key(unsigned char* value) {
-
     switch(*value) {
-        case CAPS_ON_MAKE_CODE:     key_state = Caps_Lock_On;      break;
-        case LEFT_SHIFT_MAKE_CODE:  key_state = Left_Shift_Held;   break;
-        case Right_SHIFT_MAKE_CODE: key_state = Right_Shift_Held;  break;
-        default: *value = unshifted[*value];  return; /*Non special key case*/
+        case CAPS_ON_MAKE_CODE:
+            key_state = Caps_Lock_On;
+           *value = NULL;
+            break;
+        case LEFT_SHIFT_MAKE_CODE:
+            key_state = Left_Shift_Held;
+            *value = NULL;
+            break;
+        case Right_SHIFT_MAKE_CODE:
+            key_state = Right_Shift_Held;
+            *value = NULL;
+            break;
+        default:
+            *value = unshifted[*value];
+            break;
     }
-
-    *value = NULL_CHAR; /*Special Key was detected*/
-
 }
 
 /*
- * Purpose: Manages caps lock on state,  resets caps lock state if a caps lock make code is detected 
- *          or translates scancodes to uppercase ascii characters if caps lock is active. 
- *          Sets value to NULL_CHAR for Caps Lock make code, else to corresponding caps lock  character in the caps key table
+ * Processes the input character when caps lock is on
  */
 void handle_caps_lock_on(unsigned char* value) {
-    if (*value == CAPS_ON_MAKE_CODE) {
+    if(*value == CAPS_ON_MAKE_CODE) {
         key_state = No_Special_Key;
-        *value = NULL_CHAR;
+        *value = NULL;
     } else {
         *value = caps_lock[*value];
     }
 }
 
 /*
- * Puspose: Manages shift key state, resets shift state or translates scancodes to shfited ascii characters if shift key is active. 
- *           Sets value to NULL_CHAR for shift release, else to corresponding shifted character in the shifted key table
+ * Processes the input character when either the Left Shift or Right Shift key is held down.
  */
 void handle_shift_held(unsigned char* value) {
     if((key_state == Left_Shift_Held && *value == LEFT_SHIFT_BREAK_CODE) ||
-       (key_state == Right_Shift_Held && *value == Right_SHIFT_BREAK_CODE)) {
-        *value = NULL_CHAR;
+    (key_state == Right_Shift_Held && *value == Right_SHIFT_BREAK_CODE)) {
+        *value = NULL;
         key_state = No_Special_Key;
     }else {
         if(*value == CAPS_ON_MAKE_CODE) {
-            *value = NULL_CHAR;
+            *value = NULL;
             key_state = Caps_Lock_On;
         } else {
             *value = shifted[*value];
@@ -255,38 +217,3 @@ void handle_shift_held(unsigned char* value) {
     }
 
 }
-
-
-
-
-/*
- * Purpose: Enables mouse input processing.
- */
-void enable_mouse() {
-    mouse_enabled = TRUE;
-}
-
-/*
- * Purpose: Enables keyboard input processing.
- */
-void enable_keyboard() {
-    keyboard_enabled = TRUE;
-}
-
-/*
- * Purpose: Disables mouse input processing and resets mouse button state.
- */
-void disable_mouse() {
-    mouse_enabled = FALSE;
-    mouse_button = 0;
-}
-
-/*
- * Purpose: Disables keyboard input processing and  resets the keyboard buffer.
- */
-void disable_keyboard() {
-    keyboard_enabled = FALSE;
-    kbd_buffer.rear = kbd_buffer.front = 0;
-}
-
-

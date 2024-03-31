@@ -11,8 +11,7 @@ LEVEL_UPDATE_FUNCTIONS lvl_update_functions[] = {
         lvl_7,
         lvl_8,
 		lvl_9,
-		lvl_10,
-        lvl_11
+		lvl_10
 };
 
 
@@ -205,7 +204,7 @@ void lvl_7(Model*model, UINT8 *game_state) {
 
 void lvl_8(Model *model, UINT8 *game_state) {
     if (model->game_objects[8].bottom_right.x_pos < 0) {
-        model->num_active_objects = 17;
+        model->num_active_objects = 18;
         initialize_game_object(SCREEN_RIGHT_EDGE_FOR_32_X_32, OFFSET_64_UP_FROM_GROUND, &(model->game_objects[1]),PLATFORM_SHORT);
         initialize_game_object(SCREEN_RIGHT_EDGE_FOR_32_X_32 + 110, OFFSET_64_UP_FROM_GROUND, &(model->game_objects[2]),PLATFORM_SHORT);
         initialize_game_object(SCREEN_RIGHT_EDGE_FOR_32_X_32 + 220, OFFSET_64_UP_FROM_GROUND, &(model->game_objects[3]),PLATFORM_SHORT);
@@ -224,12 +223,14 @@ void lvl_8(Model *model, UINT8 *game_state) {
         initialize_game_object(SCREEN_RIGHT_EDGE_FOR_32_X_32 + 580, OFFSET_32_UP_FROM_GROUND,&(model->game_objects[14]), TRIANGLE);
         initialize_game_object(SCREEN_RIGHT_EDGE_FOR_32_X_32 + 700, OFFSET_32_UP_FROM_GROUND,&(model->game_objects[15]), TRIANGLE);
         initialize_game_object(SCREEN_RIGHT_EDGE_FOR_32_X_32 + 810, OFFSET_32_UP_FROM_GROUND,&(model->game_objects[16]), TRIANGLE);
-    
+        initialize_game_object(SCREEN_RIGHT_EDGE_FOR_32_X_32 + 900, OFFSET_32_UP_FROM_GROUND,&(model->game_objects[17]), TRIANGLE);
 
         (*game_state)++;
     }
 
 }
+
+/* Good till here*/
 
 
 void lvl_9(Model*model, UINT8 *game_state){
@@ -259,7 +260,7 @@ void lvl_9(Model*model, UINT8 *game_state){
 
 void lvl_10(Model*model, UINT8 *game_state) {
 		if (model->game_objects[13].bottom_right.x_pos < 0) {
-        model->num_active_objects = 8;
+        model->num_active_objects = 10;
         initialize_game_object(SCREEN_RIGHT_EDGE_FOR_32_X_32,         OFFSET_64_UP_FROM_GROUND, &(model->game_objects[1]), PLATFORM_SHORT);
         initialize_game_object(SCREEN_RIGHT_EDGE_FOR_32_X_32 +   84,  OFFSET_64_UP_FROM_GROUND, &(model->game_objects[2]), PLATFORM_SHORT);
         initialize_game_object(SCREEN_RIGHT_EDGE_FOR_32_X_32 +  182,  OFFSET_64_UP_FROM_GROUND, &(model->game_objects[3]), PLATFORM_SHORT);
@@ -267,7 +268,8 @@ void lvl_10(Model*model, UINT8 *game_state) {
         initialize_game_object(SCREEN_RIGHT_EDGE_FOR_32_X_32 +   42,  OFFSET_32_UP_FROM_GROUND , &(model->game_objects[5]), TRIANGLE);
         initialize_game_object(SCREEN_RIGHT_EDGE_FOR_32_X_32 +  126,  OFFSET_32_UP_FROM_GROUND, &(model->game_objects[6]), TRIANGLE);
         initialize_game_object(SCREEN_RIGHT_EDGE_FOR_32_X_32 +  222,  OFFSET_32_UP_FROM_GROUND , &(model->game_objects[7]), TRIANGLE);
-	
+		 initialize_game_object(SCREEN_RIGHT_EDGE_FOR_32_X_32 + 302,  OFFSET_32_UP_FROM_GROUND , &(model->game_objects[8]), TRIANGLE);
+		 initialize_game_object(SCREEN_RIGHT_EDGE_FOR_32_X_32 + 342,  OFFSET_32_UP_FROM_GROUND , &(model->game_objects[9]), TRIANGLE);
         (*game_state)++;
     }
 	
@@ -275,13 +277,6 @@ void lvl_10(Model*model, UINT8 *game_state) {
 	
 }
 
-/*final sequence, waits for the last platform to pass*/
-void lvl_11(Model*model, UINT8 *game_state) {
-		if (model->game_objects[9].bottom_right.x_pos < 0) {
-        (*game_state)++;
-    }
-	
-	
-}
+
 
 
