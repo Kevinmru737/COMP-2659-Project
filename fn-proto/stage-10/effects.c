@@ -31,11 +31,13 @@ void play_explosion_sound() {
 *
 */
 void play_select_sound() {
+    long i = 0;
     enter_super();
     set_tone(CHANNEL_A, G6);
     set_volume(CHANNEL_A, 0x10);
     enable_channel(CHANNEL_A, TONE_ON, NOISE_OFF);
     set_envelope (0x00E0, 0x01);
     exit_super();
+    while(i++ < 65000); /*delay so the user can hear the sound befor the main game*/
 
 }
