@@ -8,7 +8,7 @@
 #ifndef BITMAPS_H
 #define BITMAPS_H
 
-#include "macros.h"
+#include "consts.h"
 
 extern const UINT32 player_img[];
 extern const UINT32 ground_img[];

@@ -1,6 +1,10 @@
 
 #include "Level.h"
 
+/*
+* Purpose: Serves as a single level sequnce in the game. Each level is hardcoded. This should be called with other syncrhonous events. Update
+            model s used to manage differnt levels.
+*/
 LEVEL_UPDATE_FUNCTIONS lvl_update_functions[] = {
         lvl_1,
         lvl_2,

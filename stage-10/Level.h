@@ -2,7 +2,7 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 #include "models.h"
-#include "macros.h"
+#include "consts.h"
 
 typedef void (*LEVEL_UPDATE_FUNCTIONS)(Model*, UINT8*);
 

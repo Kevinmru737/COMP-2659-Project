@@ -1,8 +1,5 @@
 #include "render.h"
-/*GLobals to clean up the previous area where the mouse was drawn*/
-int prev_mouse_drawn_x = 320;
-int prev_mouse_drawn_y = 200;
-#define MOUSE_HEIGHT 16
+
 
 /*********************************************************
 * Purpose:Master Render Function
@@ -53,7 +50,7 @@ void render(const Model* model, UINT32* base,  short *num_times_ground_drawn) {
  *
  * Output: Updates the screen buffer with the drawn game object.
 *********************************************************/
-void render_object(UINT32* base, Game_Object* game_object) {
+void render_object(UINT32* base, const Game_Object* game_object) {
     switch(game_object->type) {
         case PLATFORM_SHORT:
             draw_platform_triangle(base, game_object->top_left.x_pos, game_object->top_left.y_pos, platform_32_16, TRUE);
@@ -66,6 +63,7 @@ void render_object(UINT32* base, Game_Object* game_object) {
             break;
 	}
 }
+
 
 /*********************************************************
  * Purpose: Renders the current score on the game display based on the game state.
@@ -105,7 +103,6 @@ void render_explosion(const Model* model, UINT32* base, short explosion_counter)
 
 /**************************************
  * Purpose: Draws the 640 x 400 splash screen
- *
  *****************************************/
 void render_splash_screen(UINT16 *base) {
     draw_16_bit_bitmap(base,0, 0,400,640, splash_screen);
@@ -113,81 +110,19 @@ void render_splash_screen(UINT16 *base) {
 }
 
 
-/**************************************
- * Purpose:
- *
- *****************************************
-void render_mouse(UINT16 *base, UINT16 *base_2) {
-    UINT16 const *screen = splash_screen;
-    UINT16 const *cur = cursor;
-
-    int row = 0;
-    int start_bit_position = mouse_curr_x & 15; /*which bit to start drawning on*
-    int bits_in_first_long = UINT16_SIZE_BITS - start_bit_position;
-
-    base_2 += OFFSET_TO_UINT16(mouse_prev_x,mouse_prev_y);
-    screen += OFFSET_TO_UINT16(mouse_prev_x, mouse_prev_y);
-
-	for(row;row < 16; row++) {
-        *base_2++ = *screen++;
-        *base_2 = *screen;
-		base_2 += UINT16_PER_SCANLINE - 1;
-        screen += UINT16_PER_SCANLINE - 1;
-    }	
-
-    base += OFFSET_TO_UINT16(mouse_curr_x,mouse_curr_y); 
-
-	for(row = 0;row < 16; row++) {
-         *base |= (*cur) >> start_bit_position;
-         base++;
-         *base |= (*cur) << bits_in_first_long;
-         cur++;
-		base += UINT16_PER_SCANLINE - 1;
-    }
-
-}
-*/
-
 /****************************************************************************************
- * Purpose: Renders the mouse cursor on the screen, and cleans
- *          up the previously drawn cursor area
- * Details:
- *   Calculates the cursor's new and previously drawn  position using on globals.
- *   Uses the splash screen bitmap to restore the previously drawn cursor area
+ * Purpose: Renders the mouse cursor on the screen, and cleans up the previously drawn cursor area
  ****************************************************************************************/
 void render_mouse(UINT16 *base) {
-    UINT16* base_2 = base;
-    UINT16 *screen = splash_screen; /* splash screen bitmap*/
-    UINT16 *cur = cursor;           /* cursor bitmap*/
-    int row = 0;
-    int start_bit_position = mouse_curr_x & 15; /*which bit to start drawning on*/
-    int bits_in_first_long;
+    static int prev_mouse_drawn_x = DEFAULT_MOUSE_X;
+    static int prev_mouse_drawn_y = DEFAULT_MOUSE_Y;
+    int mouse_current_x_pos = get_mouse_curr_x();
+    int mouse_current_y_pos = get_mouse_curr_y();
 
+    restore_prev_drawn_cursor_position(base, prev_mouse_drawn_x, prev_mouse_drawn_y, splash_screen);    
 
-    base_2 += OFFSET_TO_UINT16(prev_mouse_drawn_x,prev_mouse_drawn_y);
-    screen += OFFSET_TO_UINT16(prev_mouse_drawn_x,prev_mouse_drawn_y);
-    base += OFFSET_TO_UINT16(mouse_curr_x,mouse_curr_y);
-
-    prev_mouse_drawn_x = mouse_curr_x;
-    prev_mouse_drawn_y = mouse_curr_y;
-
-    bits_in_first_long = UINT16_SIZE_BITS - start_bit_position;
-
-    for(row;row < MOUSE_HEIGHT; row++) {
-        *base_2++ = *screen++;
-        *base_2 = *screen;
-        base_2 += UINT16_PER_SCANLINE - 1;
-        screen += UINT16_PER_SCANLINE - 1;
-    }
-
-    for(row = 0;row < MOUSE_HEIGHT; row++) {
-        *base |= (*cur) >> start_bit_position;
-        base++;
-        *base |= (*cur) << bits_in_first_long;
-        cur++;
-        base += UINT16_PER_SCANLINE - 1;
-    }
-
-
+    draw_16_x_16_cursor(base, mouse_current_x_pos, mouse_current_y_pos, cursor);
+    prev_mouse_drawn_x = mouse_current_x_pos;
+    prev_mouse_drawn_y = mouse_current_y_pos;
 
 }

@@ -1,13 +1,19 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-
-
-#include "macros.h"
+#include "consts.h"
 #include "kbd.h"
 
-/*changes the inp value if a valid key (esc or space) was pressed*/
+typedef enum {
+    NO_SELECTION,
+    SELECTED_PAUL_MODE,
+    SELECTED_1_PLAYER,
+    SELECTED_EXIT
+}CURSOR_STATUS;
+
 bool user_pressed_space();
-UINT8 get_mouse_button_status();
+CURSOR_STATUS  get_user_mouse_input();
+
+
 
 #endif

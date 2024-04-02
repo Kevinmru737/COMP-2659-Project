@@ -8,7 +8,7 @@
 #ifndef vic_h
 #define vic_h
 
-#include "macros.h"
+#include "consts.h"
 
 
 extern const UINT8 *victory_animation_frames [];

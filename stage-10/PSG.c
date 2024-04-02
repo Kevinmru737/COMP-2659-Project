@@ -1,5 +1,4 @@
 #include "PSG.h"
-#include <stdio.h>
 
 /*
 * Purpose: Writes a value to a specified register
@@ -185,6 +184,7 @@ void set_envelope(UINT16 envelope, UINT8 shape) {
 *              in this module
 */
 void stop_sound() {
+    enter_super();
     set_tone(CHANNEL_A, 0);
     set_tone(CHANNEL_B, 0);
     set_tone(CHANNEL_C, 0);
@@ -194,6 +194,7 @@ void stop_sound() {
     write_psg(B_LEVEL, 0);
     write_psg(C_LEVEL, 0);
     set_envelope(0, 0);
+    exit_super();
 }
 
 /**** Note arrays for playing music ****/

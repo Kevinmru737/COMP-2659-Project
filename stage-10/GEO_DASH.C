@@ -6,27 +6,24 @@
 #include "events.h"
 #include "render.h"
 #include "rast_asm.h"
-#include "macros.h"
+#include "consts.h"
 #include "level.h"
 #include "music.h"
 #include "effects.h"
 #include "global.h"
 #include "vbl.h"
 #include "vct_inst.h"
-#include <osbind.h>
 #include "vic.h"
 
-#define FINAL_VICTORY_FRAME_COUNT   10
-#define MOUSE_LEFT_CLICK_VALUE      0xFA
-#define MOUSE_RIGHT_CLICK_VALUE      0xF9
-
 UINT8 allocated_buffer[32260];
-
 
 /*Globals to sync with the VBL*/
 Model model;
 unsigned char game_state;
 bool fatal_collision;
+bool is_main_game_running = FALSE;
+bool event_animation_running = FALSE;
+short render_request =  0;
 
 
 void final_victory_animation(UINT32* back_buffer, UINT32* front_buffer, UINT32* current_buffer);
@@ -40,17 +37,24 @@ void paul_mode();
 /*Main enter screen*/
 int main() {
     UINT16 *current_buffer = (UINT16 *) get_video_base();
-    unsigned char user_input = 0;
     Vector orig_vbl_vector;
+    CURSOR_STATUS  user_input = NO_SELECTION;
 
     render_splash_screen(current_buffer);
     init_keyboard_isr();
     orig_vbl_vector = install_vector(VBL_VECTOR_NUM, vbl_isr);
     enable_mouse();
 
-    while(user_input != MOUSE_RIGHT_CLICK_VALUE) {
-        if(user_input == MOUSE_LEFT_CLICK_VALUE) {
+    while(user_input != SELECTED_EXIT) {
+        if(user_input == SELECTED_PAUL_MODE) {
             disable_mouse();
+            play_select_sound();
+            paul_mode();
+            enable_mouse();
+            render_splash_screen(current_buffer);
+        } else if(user_input == SELECTED_1_PLAYER) {
+            disable_mouse();
+            play_select_sound();
             main_game_loop();
             enable_mouse();
             render_splash_screen(current_buffer);
@@ -60,12 +64,12 @@ int main() {
             render_mouse(current_buffer);
             render_request = 0;
         }
-        user_input = get_mouse_button_status();
+        user_input = get_user_mouse_input();
     }
-    
+
     install_vector(VBL_VECTOR_NUM, orig_vbl_vector);
     restore_keyboard_isr();
-  
+    clear_screen((UINT32*) current_buffer);
     
     return 0;
 }
@@ -94,9 +98,8 @@ void main_game_loop() {
     
     set_buffers(&back_buffer, &front_buffer, allocated_buffer);
     current_buffer = back_buffer;
-    enter_super();
     start_music();
-    exit_super();
+  
 
     is_main_game_running = TRUE;
     fatal_collision = FALSE;
@@ -105,7 +108,7 @@ void main_game_loop() {
 
     while (fatal_collision == FALSE && game_state < MAX_GAME_STATE) {
         if(user_pressed_space() == TRUE) {
-            jump_request(&model, 0);
+            jump_request(&model);
         }
 
         if (render_request == 1) {
@@ -121,10 +124,9 @@ void main_game_loop() {
     disable_keyboard();
 
     if(fatal_collision == TRUE) {
-        
-        enter_super();
+   
         play_explosion_sound();
-        exit_super();
+    
         fatal_Collision_animation(back_buffer, front_buffer,current_buffer, &model, &num_times_ground_drawn);
         render_score(current_buffer, game_state -1 );
         set_video_base(current_buffer);
@@ -134,23 +136,10 @@ void main_game_loop() {
         final_victory_animation(back_buffer, front_buffer, current_buffer);
     }
 
-    enter_super();
     stop_sound();
-    exit_super();
-    
     set_video_base(front_buffer);
 
-
 }
-
-
-
-
-
-
-
-
-
 
 /*********************************************************
  * Purpose: Initializes the back and front buffer pointers for double buffering
@@ -221,13 +210,6 @@ void switch_buffers(UINT32** current_buffer, UINT32* front_buffer, UINT32 * back
     }
 }
 
-/*********************************************************
- * Purpose: Pauses the program execution so that the score can be display for a brief time
- *********************************************************/
-void delay_to_display_score() {
-    unsigned long i = 0;
-    while (i++ < 1000000);
-}
 
 
 
@@ -239,9 +221,7 @@ void paul_mode() {
     short num_times_ground_drawn = 0;
     
     set_buffers(&back_buffer, &front_buffer, allocated_buffer);
-    enter_super();
     start_music();
-    exit_super();
     current_buffer = back_buffer;
 
     /*these need to be set every time as they are global*/
@@ -251,7 +231,7 @@ void paul_mode() {
 
     while (game_state < MAX_GAME_STATE) {
         if(user_pressed_space() == TRUE) {
-            jump_request(&model, 0);
+            jump_request(&model);
         }
 
         if (render_request == 1) {
@@ -264,9 +244,7 @@ void paul_mode() {
 
     is_main_game_running = FALSE;
     disable_keyboard();
-    enter_super();
     stop_sound();
-    exit_super();
 
     final_victory_animation(back_buffer, front_buffer, current_buffer);
 
@@ -286,7 +264,7 @@ void final_victory_animation(UINT32* back_buffer, UINT32* front_buffer, UINT32* 
     short animation_loop_count = 0;
     event_animation_running = TRUE;
 
-    while (animation_loop_count < 10) {     
+    while (animation_loop_count < MAX_VICTORY_ANIMATION_LOOP_COUNT) {
         animation_frame_counter = 0;
         while(animation_frame_counter < FINAL_VICTORY_FRAME_COUNT) {
 
@@ -300,14 +278,20 @@ void final_victory_animation(UINT32* back_buffer, UINT32* front_buffer, UINT32* 
    
         }
         animation_loop_count++;
-
     }
     event_animation_running = FALSE;
 
 }
 
 
-
+/*********************************************************
+ * Purpose: Pauses the program execution so that the score
+ *          can be display for a brief time
+ *********************************************************/
+void delay_to_display_score() {
+    unsigned long i = 0;
+    while (i++ < 500000);
+}
 
 
 

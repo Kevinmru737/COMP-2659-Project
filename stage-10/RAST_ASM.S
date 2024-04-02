@@ -73,7 +73,8 @@ _get_video_base:
 
 
 ;----------------- SUBROUTINE: void set_video_base(UINT32 *); ----------------
-; PURPOSE:  Changes the address stored at the video base register to the address inputted
+; PURPOSE:  Changes the address stored at the video base register to the address
+;           passed into the function
 ;-------------------------------------------------------------------------------
 NEW_VIDEO_BASE_OFFSET 	equ     	8
 
@@ -123,7 +124,6 @@ _enter_super:
 ;----------------- SUBROUTINE: void exit_super(); ----------------
 ; PURPOSE:  lets user exit supervisor mode. From one of the labs
 ;-------------------------------------------------------------------------------
-
 _exit_super:
 		movem.l	d0,-(sp)
 

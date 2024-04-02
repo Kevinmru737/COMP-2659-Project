@@ -1,11 +1,15 @@
 # 1 "bitmaps.c" 1
 # 1 "./bitmaps.h" 1
-# 1 "./macros.h" 1
-# 8 "./macros.h"
+# 1 "./consts.h" 1
+
+
+
+
+
 typedef unsigned char UINT8;
 typedef unsigned int  UINT16;
 typedef unsigned long UINT32;
-# 24 "./macros.h"
+
 typedef unsigned char bool;
 # 11 "./bitmaps.h" 2
 

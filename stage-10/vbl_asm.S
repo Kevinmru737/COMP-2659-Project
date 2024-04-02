@@ -2,11 +2,9 @@
 	xdef _vbl_isr
 
 
-
-
-;----------------- SUBROUTINE: void main_gm_vbl_isr(); ----------------
-; PURPOSE: VBL ISR for the main game loop( player going through the level)
-;			Uses a c helper function to update model, events, level and check for collision
+;----------------- SUBROUTINE: void vbl_isr(); ----------------
+; PURPOSE: VBL ISR for the game
+;
 ;------------------------------------------------------------------
 _vbl_isr:
 	movem.l	d0-3/a0-3,-(sp)

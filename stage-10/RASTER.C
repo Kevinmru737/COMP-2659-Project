@@ -1,10 +1,48 @@
 
  /* 
- Last modifed by Depanshu on 12 Feb 2024
+Last modifed by Depanshu on 1 April 2024
 */
 
 #include "raster.h"
 
+/*****************************************************************************
+ * Purpose: Restores the area at the previous cursor position
+ *          by copying from a splash screen buffer(bitmap array).
+******************************************************************************/
+void restore_prev_drawn_cursor_position(UINT16 * base, int x, int y, UINT16 * splash_screen) {
+    int row = 0;
+    splash_screen += OFFSET_TO_UINT16(x,y);
+    base += OFFSET_TO_UINT16(x,y);
+
+    /*Restoring the space where the cursor was drawn previously*/
+    for(row = 0;row < MOUSE_HEIGHT; row++) {
+        *base++ = *splash_screen++;
+        *base = *splash_screen;
+        base += UINT16_PER_SCANLINE - 1;
+        splash_screen += UINT16_PER_SCANLINE - 1;
+    }
+
+}
+
+
+/*****************************************************************************
+ * Purpose: Draws a 16x16 cursor at the specified coordinates on the frame buffer.
+ ******************************************************************************/
+void draw_16_x_16_cursor(UINT16 * base, int x, int y, UINT16* cursor) {
+    int row = 0;
+    int start_bit_position = x & 15;    /*which bit to start drawning on*/
+    int bits_in_first_word = UINT16_SIZE_BITS - start_bit_position;
+    base += OFFSET_TO_UINT16(x,y);
+
+    for(row;row < MOUSE_HEIGHT; row++) {
+        *base |= (*cursor) >> start_bit_position;
+        base++;
+        *base |= (*cursor) << bits_in_first_word;
+        cursor++;
+        base += UINT16_PER_SCANLINE - 1;
+    }
+
+}
 
 
 /*********************************************************
@@ -19,19 +57,17 @@
  *
  * Output:  Updates the screen buffer with the player's bitmap at the specified location.
  *********************************************************/
-
 void draw_player(UINT32 *base,int y,const UINT32 *bitmap )
 {
-  int row = 0;
-  base += 5 + ( (y << 4) + (y << 2) ); /* The player's x is always the same, fixed at 160. 160 / 32 = 5*/
+    int row = 0;
+    base += 5 + ( (y << 4) + (y << 2) ); /* The player's x is always the same, fixed at 160. 160 / 32 = 5*/
    
     for(row;row < DEFAULT_OBJECT_HEIGHT; row++) {
-		*base = *bitmap;
+	    *base = *bitmap;
         base += UINT32_PER_SCANLINE;
         bitmap++;
 	} 
 		
-
 }
 /*********************************************************
 

@@ -1,6 +1,9 @@
 #ifndef EFFECTS_H
 #define EFFECTS_H
 
+#include "rast_asm.h"
+#include "PSG.h"
+#include "consts.h"
 /*
 * effects.h contains the various sound effects used for the game
 *

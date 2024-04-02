@@ -2,7 +2,8 @@
 #define MUSIC_H
 
 #include "PSG.h"
-#include "macros.h"
+#include "consts.h"
+#include "rast_asm.h"
 
 
 /*

@@ -4,8 +4,8 @@
 /* Headers for the Raster function library
  Last modifed by Depanshu on 12 Feb 2024
 */
-#include "macros.h" 
-
+#include "consts.h"
+#define MOUSE_HEIGHT 16
 void draw_platform_triangle(UINT32 *base,int x,int y,const UINT32 *bitmap, bool is_short_platform );
 void draw_player(UINT32 *base,int y,const UINT32 *bitmap );
 
@@ -28,8 +28,8 @@ void clear_32_bit_bitmap_row(UINT32 *base, int longs_per_row, int start_bit_posi
 void clear_16_bit_bitmap(UINT16 *base, int x, int y, int height, int width );
 void clear_16_bit_bitmap_row(UINT16 *base, int words_per_row, int start_bit_position, UINT16 first_word_mask,  UINT16 second_word_mask);
 
-
-
+void draw_16_x_16_cursor(UINT16 * base, int x, int y, UINT16 * cursor);
+void restore_prev_drawn_cursor_position(UINT16 * base, int x, int y, UINT16 * splash_screen);
 void clear_screen(UINT32* base);
 void clear_except_ground(UINT32* base);
 

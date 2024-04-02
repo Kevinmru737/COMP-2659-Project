@@ -1,5 +1,4 @@
 #include "music.h"
-#include <stdio.h>
 /* Global Variables for Updating Music */
 UINT32 melody_timing;
 UINT32 bass_timing;
@@ -15,13 +14,16 @@ MUSIC_STATE music_state_tracker;
 *
 */
 void start_music() {
- 
+   
     stop_sound();
+    enter_super();
+    
     tracker_bass = 0;
     tracker_melody = 0;
     music_state_tracker = MUSIC_STATE_1;
     melody_timing = melody_notes[tracker_melody].timing;
     bass_timing = EIGHTH_NOTE;
+    
     set_tone(CHANNEL_B, melody_notes[tracker_melody].note);
     set_tone(CHANNEL_A, bass_line[tracker_bass]);
     set_envelope(0x1000, 3);
@@ -30,8 +32,10 @@ void start_music() {
     set_volume(CHANNEL_A, 0x10);
     set_volume(CHANNEL_B, 0xC);
     set_volume(CHANNEL_C, 0xA);
+    
     tracker_bass++;
     tracker_melody++;
+    exit_super();
 
 }
 
