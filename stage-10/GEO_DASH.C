@@ -36,7 +36,7 @@ void switch_buffers(UINT32** current_buffer, UINT32* front_buffer,
 UINT32 * back_buffer);
 void main_game_loop();
 
-void fatal_Collision_animation(UINT32* back_buffer, UINT32* front_buffer,
+void fatal_collision_animation(UINT32* back_buffer, UINT32* front_buffer,
 UINT32* current_buffer, Model *model, short *num_times_ground_drawn);
 
 void delay_to_display_score();
@@ -125,14 +125,12 @@ void main_game_loop() {
         if(user_pressed_space() == TRUE) {
             jump_request(&model);
         }
-
         if (render_request == 1) {
             render(&model, current_buffer, &num_times_ground_drawn);
             set_video_base(current_buffer);
             switch_buffers(&current_buffer, front_buffer, back_buffer);
             render_request = 0;
        }
-
     }
  
     is_main_game_running = FALSE;
@@ -140,7 +138,7 @@ void main_game_loop() {
 
     if(fatal_collision == TRUE) {
         play_explosion_sound();
-        fatal_Collision_animation(back_buffer, front_buffer,current_buffer,
+        fatal_collision_animation(back_buffer, front_buffer,current_buffer,
         &model, &num_times_ground_drawn);
         
         render_score(current_buffer, game_state -1 );
@@ -195,7 +193,7 @@ UINT8 back_buffer_array[]) {
  *         on the game display. 
 ******************************************************************************/
 
-void fatal_Collision_animation(UINT32* back_buffer, UINT32* front_buffer,
+void fatal_collision_animation(UINT32* back_buffer, UINT32* front_buffer,
 UINT32* current_buffer, Model *model, short *num_times_ground_drawn) {
   
     short explosion_counter = 0;
@@ -247,7 +245,9 @@ UINT32 * back_buffer) {
  ******************************************************************************/
 
 void paul_mode() {
-    UINT32 *back_buffer, *front_buffer, *current_buffer;
+    UINT32 *back_buffer, 
+           *front_buffer, 
+           *current_buffer;
     short num_times_ground_drawn = 0;
     
     set_buffers(&back_buffer, &front_buffer, allocated_buffer);
