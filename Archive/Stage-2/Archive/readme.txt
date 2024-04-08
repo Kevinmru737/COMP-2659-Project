@@ -1,0 +1,2 @@
+Each raster function has with a corresponding test funciton in test_rast.  Given the number of values to check in the frame buffer for each test, test
+outcomes are outputted in files with the names : 8_bit_pl, 16_bit_pl, 32_bit_pl, cl_16_bit, clr_32_bit
